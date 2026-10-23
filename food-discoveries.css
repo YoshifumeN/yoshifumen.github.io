@@ -1,0 +1,46 @@
+* { box-sizing: border-box; }
+    body { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; color: #222; background: #fff; font-family: Arial, sans-serif; }
+    nav { margin-bottom: 30px; }
+    h1 { color: darkgreen; font-size: 40px; margin: 0 0 12px; }
+    .intro { font-size: 18px; line-height: 1.6; margin: 0 0 30px; }
+    .content { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(260px, 1fr); gap: 24px; }
+    .map-panel { position: relative; min-width: 0; height: 510px; border: 1px solid #ccc; overflow: hidden; }
+    #world-map { display: block; width: 100%; height: 100%; background: #f7faf7; touch-action: none; cursor: grab; }
+    #world-map.dragging { cursor: grabbing; }
+    .coast path { fill: #e5eee5; stroke: #93af98; stroke-width: .7px; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+    .lines line { stroke: #e5eae5; stroke-width: 1; vector-effect: non-scaling-stroke; }
+    .pin { cursor: pointer; outline: none; }
+    .cluster { cursor: pointer; outline: none; }
+    .cluster circle { fill: #003300; stroke: white; stroke-width: 2px; vector-effect: non-scaling-stroke; }
+    .cluster text { fill: white; stroke: none; font-weight: bold; font-family: Arial, sans-serif; pointer-events: none; }
+    .cluster:focus-visible circle { stroke: #267045; stroke-width: 4px; }
+    .pin circle { fill: #267045; stroke: #fff; stroke-width: 2px; vector-effect: non-scaling-stroke; }
+    .pin.active circle, .pin:focus-visible circle { fill: #003300; stroke: #003300; stroke-width: 3px; }
+    .pin text { fill: #003300; font-family: Arial, sans-serif; font-weight: bold; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+    .reset { position: absolute; top: 10px; right: 10px; padding: 7px 12px; border: 1px solid #bbb; color: darkgreen; background: white; font: inherit; cursor: pointer; }
+    .reset:hover { background: #f2f6f2; }
+    .source { position: absolute; bottom: 5px; right: 6px; font-size: 10px; color: #777; pointer-events: none; }
+    .place-picker { position: absolute; left: 12px; bottom: 18px; min-width: 190px; background: white; border: 1px solid #bbb; padding: 9px 12px; z-index: 2; }
+    .place-picker[hidden] { display: none; }
+    .place-picker strong { display: block; color: darkgreen; font-size: 14px; margin-bottom: 8px; }
+    .place-picker button { display: block; width: 100%; border: 0; background: white; padding: 7px 0; text-align: left; font: inherit; font-size: 14px; color: #222; cursor: pointer; }
+    .place-picker button + button { border-top: 1px solid #ddd; }
+    .place-picker button:hover, .place-picker button:focus-visible { color: darkgreen; text-decoration: underline; }
+    .details { min-width: 0; }
+    .details h2 { color: darkgreen; margin: 0 0 12px; font-size: 24px; }
+    .details .restaurant { font-size: 18px; font-weight: bold; margin: 0 0 25px; }
+    .dish-photo { width: 100%; height: auto; display: block; margin: 0 0 22px; }
+    .dish-photo[hidden] { display: none; }
+    .details h3 { color: darkgreen; font-size: 20px; margin: 26px 0 12px; }
+    .details h3[hidden] { display: none; }
+    .details dt { color: darkgreen; font-size: 14px; font-weight: bold; margin: 20px 0 5px; }
+    .details dd { margin: 0; font-size: 16px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+    @media (max-width: 760px) {
+      body { padding: 0 14px 30px; }
+      h1 { font-size: 34px; }
+      .content { grid-template-columns: 1fr; }
+      .map-panel { height: 300px; }
+    }
+
+/* The shared stylesheet makes section headings sticky; keep dish details static. */
+.details h2 { position: static; top: auto; padding: 0; border: 0; background: transparent; z-index: auto; }
