@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>環境・水道分野の研究費公募カレンダー</title>
+<style>
+:root{--green:#003300;--line:#ddd;--ended:#20533a;--open:#41a764;--upcoming:#b5dcb8}
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:0 20px 40px;background:#fff;color:#222}
+nav{position:sticky;top:0;z-index:20;background:#fff;padding:15px 0;margin-bottom:30px;font-size:16px}
+nav a{color:darkgreen;margin-right:20px;text-decoration:none;white-space:nowrap}
+a:hover{text-decoration:underline}
+h1{font-size:36px;color:darkgreen;margin:18px 0 28px}
+.legend{font-size:14px;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;margin:14px 0 12px}
+.legend .sample{display:inline-block;width:28px;height:12px;vertical-align:-1px;margin-right:6px}
+.sample.ended{background:var(--ended)}
+.sample.open{background:var(--open)}
+.sample.upcoming{background:var(--upcoming)}
+.table-outer{width:100%;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.table-head,.entry{display:grid;grid-template-columns:minmax(0,205px) minmax(0,119px) minmax(0,1fr)}
+.table-head{border-bottom:1px solid #bbb;background:#fafafa}
+.head-title{font-size:14px;padding:10px 9px}
+.head-status{border-left:1px solid var(--line)}
+.month-head{display:grid;grid-template-columns:repeat(12,1fr);border-left:1px solid #bbb}
+.month-head span{text-align:center;font-size:11px;padding:12px 0;border-right:1px solid #eee}
+.entry{border-bottom:1px solid #e9e9e9;min-height:44px;align-items:stretch}
+.entry:last-child{border-bottom:0}
+.entry .info{padding:12px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info a{display:block;overflow:hidden;text-overflow:ellipsis;font-size:12px;font-weight:600;text-decoration:none;color:var(--green)}
+.info a:hover{text-decoration:underline}
+.status-cell{padding:12px 5px;border-left:1px solid #eee;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timeline{position:relative;min-height:44px;border-left:1px solid #bbb;background:repeating-linear-gradient(to right,transparent 0,transparent calc(8.333333% - 1px),#eee calc(8.333333% - 1px),#eee 8.333333%)}
+.bar{position:absolute;display:block;top:15px;height:14px;min-width:5px;background:var(--ended);cursor:pointer}
+.bar.ended{background:var(--ended)}.bar.open{background:var(--open)}.bar.upcoming{background:var(--upcoming)}
+.bar:hover,.bar:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.bar.deadline-only{min-width:6px;width:6px}
+.empty{color:#777;font-size:12px;position:absolute;left:12px;top:13px}
+.note{margin-top:18px;font-size:13px;color:#555;line-height:1.7}
+.updated{font-size:12px;color:#777;margin-top:24px}
+@media(max-width:600px){
+body{padding:0 10px 35px}
+nav{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px;padding:12px 0}
+nav a{margin:0;font-size:14px}
+h1{font-size:26px}
+.table-head,.entry{grid-template-columns:minmax(0,39%) minmax(0,25%) minmax(0,36%)}
+.head-title{padding:8px 3px;font-size:11px}
+.month-head span{font-size:8px;padding:10px 0}
+.entry,.timeline{min-height:40px}
+.entry .info{padding:12px 3px}
+.info a{font-size:10px}
+.status-cell{font-size:9px;padding:12px 2px}
+.bar{top:14px;height:12px}
+.legend{font-size:12px;gap:6px 12px}
+}
+@media(max-width:380px){
+.table-head,.entry{grid-template-columns:minmax(0,39%) minmax(0,27%) minmax(0,34%)}
+.status-cell{font-size:8px}
+.month-head span{font-size:7px}
+}
+</style>
+</head>
+<body>
+<nav aria-label="サイト内ナビゲーション">
+<a href="index.html">Home</a>
+<a href="research.html">Research</a>
+<a href="publications.html">Publications</a>
+<a href="presentations.html">Presentations</a>
+<a href="cv.html">CV</a>
+<a href="beyond-the-lab.html">Beyond the Lab</a>
+</nav>
+<main>
+<h1>環境・水道分野の研究費公募カレンダー</h1>
+<div class="legend" aria-label="募集状況の色分け">
+<span><span class="sample ended"></span>募集終了</span>
+<span><span class="sample open"></span>募集中</span>
+<span><span class="sample upcoming"></span>募集予定</span>
+</div>
+<div class="table-outer" role="region" aria-label="研究費の年間募集期間一覧">
+<div class="table-head"><div class="head-title">研究費</div><div class="head-title head-status">募集状況</div><div class="month-head" id="months"></div></div>
+<div id="rows"></div>
+</div>
+<p class="note">応募資格や所属機関内締切は公式募集要項で確認してください。</p>
+<p class="updated">掲載情報：2026年の公募／更新日：2026年10月24日</p>
+</main>
+<script>
+'use strict';
+// 年度と公募を実施する暦年は一致しないことがあります。
+// 今後の週次調査で、start/end/url と更新日を改訂してください。
+const grants=[
+{name:'科研費・研究活動スタート支援',fiscalYear:2026,start:'2026-03-01',end:'2026-05-08',url:'https://www.jsps.go.jp/j-grantsinaid/'},
+{name:'科研費・若手研究',fiscalYear:2027,start:null,end:'2026-09-17',url:'https://www.jsps.go.jp/j-grantsinaid/'},
+{name:'科研費・基盤研究(C)',fiscalYear:2027,start:null,end:'2026-09-17',url:'https://www.jsps.go.jp/j-grantsinaid/'},
+{name:'環境研究総合推進費',fiscalYear:2027,start:'2026-09-07',end:'2026-10-09',url:'https://www.erca.go.jp/suishinhi/koubo/'},
+{name:'クリタ水・環境科学振興財団',fiscalYear:2026,start:'2026-03-01',end:'2026-04-30',url:'https://www.kwef.org/'},
+{name:'住友財団・環境研究助成',fiscalYear:2026,start:'2026-04-15',end:'2026-06-30',url:'https://www.sumitomo.or.jp/'},
+{name:'ニッセイ財団・環境問題研究助成',fiscalYear:2026,start:'2026-01-13',end:'2026-03-24',url:'https://www.nihonseimei-zaidan.or.jp/'},
+{name:'河川基金・研究者部門',fiscalYear:2027,start:null,end:'2026-09-30',url:'https://www.kasen.or.jp/'}
+];
+const now=new Date();
+const asOf=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+const rows=document.getElementById('rows'),months=document.getElementById('months');
+for(let m=1;m<=12;m++){const el=document.createElement('span');el.textContent=m+'月';months.appendChild(el);}
+function pos(iso){const d=new Date(iso+'T12:00:00');const m=d.getMonth(),day=d.getDate()-1,n=new Date(d.getFullYear(),m+1,0).getDate();return (m+day/n)/12*100;}
+function status(g){
+if(g.end&&g.end<asOf)return '募集終了';
+if(g.start&&g.start<=asOf&&g.end&&asOf<=g.end)return '募集中';
+if(g.start&&g.start>asOf)return '募集予定';
+return '日程要確認';
+}
+for(const g of grants){
+const item=document.createElement('div');item.className='entry';
+const info=document.createElement('div');info.className='info';
+const title=document.createElement('a');title.href=g.url;title.target='_blank';title.rel='noopener noreferrer';title.textContent=g.name;title.title=g.name;info.appendChild(title);
+const st=document.createElement('div');st.className='status-cell';st.textContent=g.fiscalYear+'年度・'+status(g);
+const track=document.createElement('div');track.className='timeline';
+if(g.end){
+const bar=document.createElement('a');bar.href=g.url;bar.target='_blank';bar.rel='noopener noreferrer';
+bar.className='bar '+({'募集終了':'ended','募集中':'open','募集予定':'upcoming'}[status(g)]||'ended');
+if(g.start){const left=pos(g.start),right=pos(g.end)+100/(12*31);bar.style.left=left+'%';bar.style.width=Math.max(.4,right-left)+'%';}
+else{bar.classList.add('deadline-only');bar.style.left=pos(g.end)+'%';}
+bar.title=g.name+'｜'+g.fiscalYear+'年度｜'+(g.start?'募集：'+g.start+'〜'+g.end:'締切：'+g.end+'（開始日未確認）');
+bar.setAttribute('aria-label',bar.title+'｜公式サイトへ');
+track.appendChild(bar);
+}else{const t=document.createElement('span');t.className='empty';t.textContent='未発表';track.appendChild(t);}
+item.append(info,st,track);rows.appendChild(item);
+}
+</script>
+</body>
+</html>
