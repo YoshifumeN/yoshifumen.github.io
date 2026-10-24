@@ -10,7 +10,7 @@
         photo: 'photo-maruyama', x: 892.55, y: 123.25 },
       tatsuki: { dish: '牛ロースカツカレー', restaurant: 'SOUP CURRY＆HAMBURG 龍祈',
         address: '北海道札幌市中央区南4条西6丁目 青山ビル2F',
-        visited: '2023-02-23', comment: '—', x: 892.55, y: 123.25 },
+        visited: '2023-02-23', comment: '—', photo: 'photo-tatsuki', x: 892.55, y: 123.25 },
       hamabe: { dish: 'フグのから揚げ', restaurant: '浜べゑ 新山口北口店',
         address: '山口県山口市小郡明治2-7-15 河村ビル 1F',
         visited: '2023-11-30', comment: 'フグはから揚げがうまい。',
