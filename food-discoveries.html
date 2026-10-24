@@ -144,11 +144,17 @@
       <span class="source">Coastlines: GSHHG / Basemap</span>
     </section>
     <article class="details" aria-live="polite">
-      <h2 id="dish">チキンレッグカレー</h2>
+      <h2 id="dish" class="dish-title">チキンレッグカレー</h2>
       <p id="restaurant" class="restaurant">欧風カレーKEN</p>
       <img id="dish-photo" class="dish-photo" alt="" hidden>
-      <h3 id="second-dish" hidden></h3>
+      <dl class="food-comment">
+        <dt>Comment</dt><dd id="comment" lang="ja">—</dd>
+      </dl>
+      <h2 id="second-dish" class="dish-title" hidden></h2>
       <img id="second-photo" class="dish-photo" alt="" hidden>
+      <dl class="food-comment" id="second-comment-block" hidden>
+        <dt>Comment</dt><dd id="second-comment" lang="ja"></dd>
+      </dl>
       <template id="photo-ken"><img src="food-images/ken-chicken-leg-curry.jpg" alt="Chicken leg curry from 欧風カレーKEN"></template>
       <template id="photo-boulted"><img src="food-images/boulted-croissant.jpg" alt="Country ham and cheese croissant at Boulted Bread"></template>
       <template id="photo-duck"><img src="food-images/second-empire-duck.jpg" alt="Duck dish at Second Empire"></template>
@@ -157,7 +163,6 @@
       <dl>
         <dt>Address</dt><dd id="address">北海道札幌市東区北15条東1丁目2-17 イースタンビル 1F</dd>
         <dt>Last visited</dt><dd id="visited">2024-02-06</dd>
-        <dt>Comment</dt><dd id="comment">—</dd>
       </dl>
     </article>
   </main>
