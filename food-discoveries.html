@@ -112,10 +112,12 @@
       <path d="M67.3 194.1 L67.1 190.4 L70.0 192.6 L67.3 194.1 Z"/>
         </g>
         <g id="locations">
-      <g class="pin active" data-place="ken" data-side="left" role="button" tabindex="0" aria-label="Sapporo">
-        <circle cx="892.65" cy="123.295" r="10"/>
-        <text x="875.65" y="128.295" text-anchor="end">Sapporo</text>
+      <g id="sapporo-cluster" class="cluster" role="button" tabindex="0" aria-label="Two restaurants in Sapporo. Choose one.">
+        <circle cx="892.55" cy="123.25" r="14"/>
+        <text x="892.55" y="128.25" text-anchor="middle">2</text>
+        <title>Sapporo: 2 restaurants</title>
       </g>
+      <text id="sapporo-label" x="874.55" y="128.25" text-anchor="end">Sapporo</text>
       <g class="pin" data-place="hamilton" data-region="us" data-side="right" role="button" tabindex="0" aria-label="Washington, D.C.">
         <circle cx="286.022" cy="135.596" r="10"/>
         <text x="303.022" y="140.596" text-anchor="start">Washington, D.C.</text>
@@ -141,6 +143,11 @@
         <button type="button" data-pick="boulted">Boulted Bread</button>
         <button type="button" data-pick="empire">Second Empire</button>
       </div>
+      <div class="place-picker" id="sapporo-picker" hidden>
+        <strong>Sapporo</strong>
+        <button type="button" data-pick="ken">欧風カレーKEN</button>
+        <button type="button" data-pick="maruyama">円山教授。 — 浜カレー</button>
+      </div>
       <span class="source">Coastlines: GSHHG / Basemap</span>
     </section>
     <article class="details" aria-live="polite">
@@ -156,6 +163,7 @@
         <dt>Comment</dt><dd id="second-comment" lang="ja"></dd>
       </dl>
       <template id="photo-ken"><img src="food-images/ken-chicken-leg-curry.jpg" alt="Chicken leg curry from 欧風カレーKEN"></template>
+      <template id="photo-maruyama"><img src="food-images/maruyama-hama-curry.webp" alt="浜カレー with sautéed seafood at 円山教授。 in Sapporo"></template>
       <template id="photo-boulted"><img src="food-images/boulted-croissant.jpg" alt="Country ham and cheese croissant at Boulted Bread"></template>
       <template id="photo-duck"><img src="food-images/second-empire-duck.jpg" alt="Duck dish at Second Empire"></template>
       <template id="photo-souffle"><img src="food-images/second-empire-souffle.jpg" alt="Chocolate soufflé at Second Empire"></template>

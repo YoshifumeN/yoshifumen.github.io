@@ -48,3 +48,6 @@
 
 /* The shared stylesheet makes section headings sticky; keep dish details static. */
 .details h2 { position: static; top: auto; padding: 0; border: 0; background: transparent; z-index: auto; }
+
+/* Sapporo has two curated restaurants; use one map pin and an in-map chooser. */
+#sapporo-label { fill: #003300; font-family: Arial, sans-serif; font-weight: bold; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
