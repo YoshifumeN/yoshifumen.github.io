@@ -4,6 +4,10 @@
     const places = {
       ken: { dish: 'チキンレッグカレー', restaurant: '欧風カレーKEN',
         address: '北海道札幌市東区北15条東1丁目2-17 イースタンビル 1F', visited: '2024-02-06', comment: 'チキンの塩気がちょうどよい。身がホロホロで、スプーンで簡単に崩せる。ピリ辛のルーがよく合っておいしい。札幌に来るたびに立ち寄りたい。', photo: 'photo-ken', x: 892.65, y: 123.30 },
+      maruyama: { dish: '浜カレー', restaurant: '円山教授。円山本店',
+        address: '〒064-0804 北海道札幌市中央区南4条西21丁目1-27 第五藤栄ビル',
+        visited: '2024-01-06', comment: '魚介のソテーがたくさんでうれしい。エビの出汁のカレーがとてもおいしい。',
+        photo: 'photo-maruyama', x: 892.55, y: 123.25 },
       hamilton: { dish: 'Jumbo Lump Crab Cake', restaurant: 'The Hamilton',
         address: '600 14th St NW, Washington, DC 20005, USA', visited: '2026-09-19', comment: '—', x: 286.02, y: 135.60 },
       boulted: { dish: 'Country Ham & Cheese Croissant', restaurant: 'Boulted Bread',
@@ -17,6 +21,9 @@
     };
     const map = document.getElementById('world-map');
     const markers = Array.from(document.querySelectorAll('.pin'));
+    const sapporoCluster = document.getElementById('sapporo-cluster');
+    const sapporoLabel = document.getElementById('sapporo-label');
+    const sapporoPicker = document.getElementById('sapporo-picker');
     const eastCluster = document.getElementById('us-cluster');
     const raleighCluster = document.getElementById('raleigh-cluster');
     const picker = document.getElementById('raleigh-picker');
@@ -24,6 +31,11 @@
     let view = { x: 0, y: 0, w: width, h: height };
     let drag = null;
     let selected = 'ken';
+
+    function closePickers() {
+      picker.hidden = true;
+      sapporoPicker.hidden = true;
+    }
 
     function scaleCluster(element, centerX, centerY, zoom, radius) {
       element.querySelector('circle').setAttribute('r', radius * zoom);
@@ -42,6 +54,7 @@
       const overview = view.w > 400;
       eastCluster.style.display = overview ? '' : 'none';
       raleighCluster.style.display = overview ? 'none' : '';
+      sapporoCluster.style.display = '';
       markers.forEach(function (marker) {
         marker.style.display = overview && marker.dataset.region === 'us' ? 'none' : '';
         const point = marker.querySelector('circle');
@@ -54,6 +67,10 @@
         label.setAttribute('y', py + 5 * zoom);
         label.style.strokeWidth = (3 * zoom) + 'px';
       });
+      scaleCluster(sapporoCluster, 892.55, 123.25, zoom, 14);
+      sapporoLabel.setAttribute('font-size', 14 * zoom);
+      sapporoLabel.setAttribute('x', 892.55 - 18 * zoom);
+      sapporoLabel.setAttribute('y', 123.25 + 5 * zoom);
       scaleCluster(eastCluster, 283.78, 140.18, zoom, 14);
       scaleCluster(raleighCluster, 281.53, 144.77, zoom, 14);
     }
@@ -91,9 +108,9 @@
       markers.forEach(function (marker) {
         marker.classList.toggle('active', marker.dataset.place === id);
       });
-      picker.hidden = true;
+      closePickers();
       // US locations are grouped on the world map; keep Raleigh and DC selectable.
-      const w = id === 'ken' ? width / 4 : width / 7;
+      const w = (id === 'ken' || id === 'maruyama') ? width / 4 : width / 7;
       setView(place.x - w / 2, place.y - w / 4, w);
     }
 
@@ -110,29 +127,37 @@
       });
     });
     function zoomToEastUS() {
-      picker.hidden = true;
+      closePickers();
       const w = width / 7;
       setView(283.78 - w / 2, 140.18 - w / 4, w);
     }
     function openRaleigh() {
+      sapporoPicker.hidden = true;
       picker.hidden = !picker.hidden;
+    }
+    function openSapporo() {
+      picker.hidden = true;
+      sapporoPicker.hidden = !sapporoPicker.hidden;
     }
     eastCluster.addEventListener('click', function (event) { event.stopPropagation(); zoomToEastUS(); });
     raleighCluster.addEventListener('click', function (event) { event.stopPropagation(); openRaleigh(); });
-    for (const item of [eastCluster, raleighCluster]) {
+    sapporoCluster.addEventListener('click', function (event) { event.stopPropagation(); openSapporo(); });
+    for (const item of [eastCluster, raleighCluster, sapporoCluster]) {
       item.addEventListener('keydown', function (event) {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          if (item === eastCluster) zoomToEastUS(); else openRaleigh();
+          if (item === eastCluster) zoomToEastUS();
+          else if (item === sapporoCluster) openSapporo();
+          else openRaleigh();
         }
       });
     }
-    picker.querySelectorAll('button[data-pick]').forEach(function (button) {
+    document.querySelectorAll('.place-picker button[data-pick]').forEach(function (button) {
       button.addEventListener('click', function () { choose(button.dataset.pick); });
     });
     map.addEventListener('wheel', function (event) {
       event.preventDefault();
-      picker.hidden = true;
+      closePickers();
       const bounds = map.getBoundingClientRect();
       const centerX = view.x + (event.clientX - bounds.left) / bounds.width * view.w;
       const centerY = view.y + (event.clientY - bounds.top) / bounds.height * view.h;
@@ -142,7 +167,7 @@
     }, { passive: false });
     map.addEventListener('pointerdown', function (event) {
       if (event.target.closest('.pin, .cluster')) return;
-      picker.hidden = true;
+      closePickers();
       drag = { pointer: event.pointerId, x: event.clientX, y: event.clientY, view: { ...view } };
       map.setPointerCapture(event.pointerId);
       map.classList.add('dragging');
@@ -158,7 +183,7 @@
     map.addEventListener('pointerup', endDrag);
     map.addEventListener('pointercancel', endDrag);
     document.getElementById('reset-map').addEventListener('click', function () {
-      picker.hidden = true;
+      closePickers();
       setView(0, 0, width);
     });
     choose(selected);
