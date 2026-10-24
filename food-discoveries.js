@@ -8,6 +8,9 @@
         address: '〒064-0804 北海道札幌市中央区南4条西21丁目1-27 第五藤栄ビル',
         visited: '2024-01-06', comment: '魚介のソテーがたくさんでうれしい。エビの出汁のカレーがとてもおいしい。',
         photo: 'photo-maruyama', x: 892.55, y: 123.25 },
+      tatsuki: { dish: '牛ロースカツカレー', restaurant: 'SOUP CURRY＆HAMBURG 龍祈',
+        address: '北海道札幌市中央区南4条西6丁目 青山ビル2F',
+        visited: '2023-02-23', comment: '—', x: 892.55, y: 123.25 },
       hamabe: { dish: 'フグのから揚げ', restaurant: '浜べゑ 新山口北口店',
         address: '山口県山口市小郡明治2-7-15 河村ビル 1F',
         visited: '2023-11-30', comment: 'フグはから揚げがうまい。',
@@ -114,7 +117,7 @@
       });
       closePickers();
       // US locations are grouped on the world map; keep Raleigh and DC selectable.
-      const w = (id === 'ken' || id === 'maruyama') ? width / 4 : width / 7;
+      const w = (id === 'ken' || id === 'maruyama' || id === 'tatsuki') ? width / 4 : width / 7;
       setView(place.x - w / 2, place.y - w / 4, w);
     }
 
