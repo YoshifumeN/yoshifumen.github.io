@@ -4,8 +4,8 @@
     const places = {
       ken: { dish: 'チキンレッグカレー', restaurant: '欧風カレーKEN',
         address: '北海道札幌市東区北15条東1丁目2-17 イースタンビル 1F', visited: '2024-02-06', comment: 'チキンの塩気がちょうどよい。身がホロホロで、スプーンで簡単に崩せる。ピリ辛のルーがよく合っておいしい。札幌に来るたびに立ち寄りたい。', photo: 'photo-ken', x: 892.65, y: 123.30 },
-      maruyama: { dish: '浜カレー', restaurant: '円山教授。',
-        address: '北海道札幌市中央区（円山本店・北円山店のどちらに訪問したか確認待ち）',
+      maruyama: { dish: '浜カレー', restaurant: '円山教授。円山本店',
+        address: '〒064-0804 北海道札幌市中央区南4条西21丁目1-27 第五藤栄ビル',
         visited: '2024-01-06', comment: '魚介のソテーがたくさんでうれしい。エビの出汁のカレーがとてもおいしい。',
         photo: 'photo-maruyama', x: 892.55, y: 123.25 },
       hamilton: { dish: 'Jumbo Lump Crab Cake', restaurant: 'The Hamilton',
