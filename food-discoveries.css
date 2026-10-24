@@ -31,8 +31,12 @@
     .details .restaurant { font-size: 18px; font-weight: bold; margin: 0 0 25px; }
     .dish-photo { width: 100%; height: auto; display: block; margin: 0 0 22px; }
     .dish-photo[hidden] { display: none; }
-    .details h3 { color: darkgreen; font-size: 20px; margin: 26px 0 12px; }
-    .details h3[hidden] { display: none; }
+    .details .dish-title { color: darkgreen; font: 700 24px/1.3 Arial, sans-serif; margin: 24px 0 12px; }
+    .details .dish-title:first-child { margin-top: 0; }
+    .details .dish-title[hidden] { display: none; }
+    .details .restaurant { font-family: Arial, sans-serif; }
+    .food-comment { margin: 0 0 24px; }
+    .food-comment[hidden] { display: none; }
     .details dt { color: darkgreen; font-size: 14px; font-weight: bold; margin: 20px 0 5px; }
     .details dd { margin: 0; font-size: 16px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
     @media (max-width: 760px) {
