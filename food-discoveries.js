@@ -3,16 +3,17 @@
     'use strict';
     const places = {
       ken: { dish: 'チキンレッグカレー', restaurant: '欧風カレーKEN',
-        address: '北海道札幌市東区北15条東1丁目2-17 イースタンビル 1F', visited: '2024-02-06', comment: '—', photo: 'photo-ken', x: 892.65, y: 123.30 },
+        address: '北海道札幌市東区北15条東1丁目2-17 イースタンビル 1F', visited: '2024-02-06', comment: 'チキンの塩気がちょうどよい。身がホロホロで、スプーンで簡単に崩せる。ピリ辛のルーがよく合っておいしい。札幌に来るたびに立ち寄りたい。', photo: 'photo-ken', x: 892.65, y: 123.30 },
       hamilton: { dish: 'Jumbo Lump Crab Cake', restaurant: 'The Hamilton',
         address: '600 14th St NW, Washington, DC 20005, USA', visited: '2026-09-19', comment: '—', x: 286.02, y: 135.60 },
       boulted: { dish: 'Country Ham & Cheese Croissant', restaurant: 'Boulted Bread',
-        address: '328 Dupont Cir, Raleigh, NC 27603, USA', visited: '2026-10-11', comment: '—', photo: 'photo-boulted', x: 281.53, y: 144.77 },
+        address: '328 Dupont Cir, Raleigh, NC 27603, USA', visited: '2026-10-11', comment: 'ハムとチーズの塩気と、バターの風味が合っている。外側の層はサクサクで、内側はふわっとしっとり。とてもおいしい。', photo: 'photo-boulted', x: 281.53, y: 144.77 },
       empire: { dish: 'Roasted Pennsylvania Five Spice Duck Breast', restaurant: 'Second Empire Restaurant and Tavern',
-        address: '330 Hillsborough St, Raleigh, NC 27603, USA', visited: '2026-10-10', comment: '—', photo: 'photo-duck',
-        secondDish: 'Empire Chocolate Souffle', secondPhoto: 'photo-souffle', x: 281.52, y: 144.76 },
+        address: '330 Hillsborough St, Raleigh, NC 27603, USA', visited: '2026-10-10', comment: '付け合わせのブロッコリーを固めたやつがおいしい。ソースは時期により変わるようで、今回はかぼちゃのソースだった。', photo: 'photo-duck',
+        secondDish: 'Empire Chocolate Souffle', secondPhoto: 'photo-souffle',
+        secondComment: '注文してから焼いてくれて、焼き立てにミルクソースをかけて食べるのがおいしい。サクサクで、ほんのり甘い。', x: 281.52, y: 144.76 },
       saltwater: { dish: 'She Crab Soup', restaurant: 'Saltwater Grill at River Bend',
-        address: '1 Marina Rd, New Bern, NC 28562, USA', visited: '—', comment: '—', photo: 'photo-saltwater', x: 286.02, y: 146.65 }
+        address: '1 Marina Rd, New Bern, NC 28562, USA', visited: '2026-09-07', comment: 'クリームスープはトロッとしていてカニの風味と塩気がちょうどよい。カニの身もたくさん乗っている。再訪して食べたい。', photo: 'photo-saltwater', x: 286.02, y: 146.65 }
     };
     const map = document.getElementById('world-map');
     const markers = Array.from(document.querySelectorAll('.pin'));
@@ -84,6 +85,9 @@
       extraLabel.hidden = !place.secondDish;
       extraLabel.textContent = place.secondDish || '';
       putPhoto('second-photo', place.secondPhoto);
+      const secondCommentBlock = document.getElementById('second-comment-block');
+      secondCommentBlock.hidden = !place.secondComment;
+      document.getElementById('second-comment').textContent = place.secondComment || '';
       markers.forEach(function (marker) {
         marker.classList.toggle('active', marker.dataset.place === id);
       });
