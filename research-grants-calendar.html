@@ -86,16 +86,17 @@ h1{font-size:26px}
 <script>
 'use strict';
 // 年度と公募を実施する暦年は一致しないことがあります。
-// 今後の週次調査で、start/end/url と更新日を改訂してください。
+// 募集予定は公式予告で期間が確定した場合に限り、officialForecast:true を設定してください。
+// 前年の募集時期から推定した日程は入力しないでください。
 const grants=[
 {name:'科研費・研究活動スタート支援',fiscalYear:2026,start:'2026-03-01',end:'2026-05-08',url:'https://www.jsps.go.jp/j-grantsinaid/'},
-{name:'科研費・若手研究',fiscalYear:2027,start:null,end:'2026-09-17',url:'https://www.jsps.go.jp/j-grantsinaid/'},
-{name:'科研費・基盤研究(C)',fiscalYear:2027,start:null,end:'2026-09-17',url:'https://www.jsps.go.jp/j-grantsinaid/'},
+{name:'科研費・若手研究',fiscalYear:2027,start:'2026-07-14',end:'2026-09-17',url:'https://www.jsps.go.jp/j-grantsinaid/02_koubo/kiban.html'},
+{name:'科研費・基盤研究(C)',fiscalYear:2027,start:'2026-07-14',end:'2026-09-17',url:'https://www.jsps.go.jp/j-grantsinaid/02_koubo/kiban.html'},
 {name:'環境研究総合推進費',fiscalYear:2027,start:'2026-09-07',end:'2026-10-09',url:'https://www.erca.go.jp/suishinhi/koubo/'},
 {name:'クリタ水・環境科学振興財団',fiscalYear:2026,start:'2026-03-01',end:'2026-04-30',url:'https://www.kwef.org/'},
 {name:'住友財団・環境研究助成',fiscalYear:2026,start:'2026-04-15',end:'2026-06-30',url:'https://www.sumitomo.or.jp/'},
 {name:'ニッセイ財団・環境問題研究助成',fiscalYear:2026,start:'2026-01-13',end:'2026-03-24',url:'https://www.nihonseimei-zaidan.or.jp/'},
-{name:'河川基金・研究者部門',fiscalYear:2027,start:null,end:'2026-09-30',url:'https://www.kasen.or.jp/'}
+{name:'河川基金・研究者部門',fiscalYear:2027,start:'2026-09-01',end:'2026-09-30',url:'https://www.kasen.or.jp/kikin/tabid290.html'}
 ];
 const now=new Date();
 const asOf=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
@@ -105,8 +106,8 @@ function pos(iso){const d=new Date(iso+'T12:00:00');const m=d.getMonth(),day=d.g
 function status(g){
 if(g.end&&g.end<asOf)return '募集終了';
 if(g.start&&g.start<=asOf&&g.end&&asOf<=g.end)return '募集中';
-if(g.start&&g.start>asOf)return '募集予定';
-return '日程要確認';
+if(g.start&&g.start>asOf&&g.officialForecast===true)return '募集予定';
+return '未発表';
 }
 for(const g of grants){
 const item=document.createElement('div');item.className='entry';
