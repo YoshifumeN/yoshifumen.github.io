@@ -81,7 +81,8 @@ h1{font-size:26px}
 <div id="rows"></div>
 </div>
 <p class="note">応募資格や所属機関内締切は公式募集要項で確認してください。</p>
-<p class="updated">掲載情報：2026年の公募／更新日：2026年10月24日</p>
+<p class="updated">募集予告：<a href="https://sumitomo.or.jp/html/kankyo/kankyobosyukadai2027.htm" target="_blank" rel="noopener noreferrer">住友財団・2027年度課題研究</a>（募集期間未発表）／<a href="https://www.af-info.or.jp/research/apply.html" target="_blank" rel="noopener noreferrer">旭硝子財団・2028年度採択分</a>（2027年6月募集情報公開予定）</p>
+<p class="updated">掲載情報：2026年に実施された公募／最終確認：2026年10月26日</p>
 </main>
 <script>
 'use strict';
@@ -89,14 +90,17 @@ h1{font-size:26px}
 // 募集予定は公式予告で期間が確定した場合に限り、officialForecast:true を設定してください。
 // 前年の募集時期から推定した日程は入力しないでください。
 const grants=[
-{name:'科研費・研究活動スタート支援',fiscalYear:2026,start:'2026-03-01',end:'2026-05-08',url:'https://www.jsps.go.jp/j-grantsinaid/'},
+{name:'科研費・研究活動スタート支援',fiscalYear:2026,start:'2026-03-01',end:'2026-05-08',url:'https://www.jsps.go.jp/j-grantsinaid/22_startup_support/download.html'},
 {name:'科研費・若手研究',fiscalYear:2027,start:'2026-07-14',end:'2026-09-17',url:'https://www.jsps.go.jp/j-grantsinaid/02_koubo/kiban.html'},
 {name:'科研費・基盤研究(C)',fiscalYear:2027,start:'2026-07-14',end:'2026-09-17',url:'https://www.jsps.go.jp/j-grantsinaid/02_koubo/kiban.html'},
-{name:'環境研究総合推進費',fiscalYear:2027,start:'2026-09-07',end:'2026-10-09',url:'https://www.erca.go.jp/suishinhi/koubo/'},
-{name:'クリタ水・環境科学振興財団',fiscalYear:2026,start:'2026-03-01',end:'2026-04-30',url:'https://www.kwef.org/'},
-{name:'住友財団・環境研究助成',fiscalYear:2026,start:'2026-04-15',end:'2026-06-30',url:'https://www.sumitomo.or.jp/'},
-{name:'ニッセイ財団・環境問題研究助成',fiscalYear:2026,start:'2026-01-13',end:'2026-03-24',url:'https://www.nihonseimei-zaidan.or.jp/'},
-{name:'河川基金・研究者部門',fiscalYear:2027,start:'2026-09-01',end:'2026-09-30',url:'https://www.kasen.or.jp/kikin/tabid290.html'}
+{name:'環境研究総合推進費',fiscalYear:2027,start:'2026-09-07',end:'2026-10-09',url:'https://www.erca.go.jp/suishinhi/koubo/r09_koubo_1.html'},
+{name:'クリタ水・環境科学振興財団',fiscalYear:2026,start:'2026-03-01',end:'2026-04-30',url:'https://www.kwef.org/josei/josei_koku.html'},
+{name:'住友財団・環境研究助成',fiscalYear:2026,start:'2026-04-15',end:'2026-06-30',url:'https://sumitomo.or.jp/html/kankyo/kankyou.htm'},
+{name:'ニッセイ財団・環境問題研究助成',fiscalYear:2026,start:'2026-01-13',end:'2026-03-24',url:'https://nihonseimei-zaidan.or.jp/kankyo/02.html'},
+{name:'旭硝子財団・研究奨励',fiscalYear:2027,start:'2026-08-01',end:'2026-08-28',url:'https://www.af-info.or.jp/research/apply.html'},
+{name:'旭硝子財団・サステイナブル（提案）',fiscalYear:2027,start:'2026-08-01',end:'2026-10-09',url:'https://www.af-info.or.jp/research/apply.html'},
+{name:'日本水環境学会・クリタ賞国際発表助成',fiscalYear:2026,start:'2026-09-29',end:'2026-11-26',url:'https://jswe.or.jp/awards/kurita/kuritapresen.html',note:'応募資格：過去のクリタ賞受賞者・40歳未満（2026年4月1日時点）・学会会員等。再応募は要確認。'},
+{name:'河川基金・研究者部門',fiscalYear:2027,start:'2026-09-01',end:'2026-09-30',url:'https://www.kasen.or.jp/26160',note:'2026年11月24日への期限変更は学校・団体部門のみ。研究者部門は9月30日締切。'}
 ];
 const now=new Date();
 const asOf=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
@@ -113,7 +117,7 @@ for(const g of grants){
 const item=document.createElement('div');item.className='entry';
 const info=document.createElement('div');info.className='info';
 const title=document.createElement('a');title.href=g.url;title.target='_blank';title.rel='noopener noreferrer';title.textContent=g.name;title.title=g.name;info.appendChild(title);
-const st=document.createElement('div');st.className='status-cell';st.textContent=g.fiscalYear+'年度・'+status(g);
+const st=document.createElement('div');st.className='status-cell';st.textContent=g.fiscalYear+'年度・'+status(g);if(g.note)st.title=g.note;
 const track=document.createElement('div');track.className='timeline';
 if(g.end){
 const bar=document.createElement('a');bar.href=g.url;bar.target='_blank';bar.rel='noopener noreferrer';
@@ -121,6 +125,7 @@ bar.className='bar '+({'募集終了':'ended','募集中':'open','募集予定':
 if(g.start){const left=pos(g.start),right=pos(g.end)+100/(12*31);bar.style.left=left+'%';bar.style.width=Math.max(.4,right-left)+'%';}
 else{bar.classList.add('deadline-only');bar.style.left=pos(g.end)+'%';}
 bar.title=g.name+'｜'+g.fiscalYear+'年度｜'+(g.start?'募集：'+g.start+'〜'+g.end:'締切：'+g.end+'（開始日未確認）');
+if(g.note)bar.title+='｜'+g.note;
 bar.setAttribute('aria-label',bar.title+'｜公式サイトへ');
 track.appendChild(bar);
 }else{const t=document.createElement('span');t.className='empty';t.textContent='未発表';track.appendChild(t);}
