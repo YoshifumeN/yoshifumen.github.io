@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Research Visualizer — local HTML v1.7.4</title>
 <style>
 :root { color-scheme:light; --ink:#16273a; --sub:#61718a; --line:#dfe7ef; --navy:#183c64; --blue:#1e6cd1; --bg:#f4f7fb; --surface:#fff; --pale:#eff5fb; --radius:12px; font-family:system-ui,"Yu Gothic UI","Meiryo",sans-serif; }
@@ -367,7 +369,7 @@ function fmt(x){if(!Number.isFinite(x))return '';const a=Math.abs(x);if(a && (a>
 function numeric(v){if(typeof v==='number')return Number.isFinite(v)?v:NaN;let s=String(v??'').trim();if(!s)return NaN;s=s.replaceAll(',','');return /^[-+]?(?:\d+\.?\d*|\.\d+)(?:[Ee][-+]?\d+)?$/.test(s)?Number(s):NaN}
 function safeFilename(s){return (s||'research_figure').replace(/[\\/:*?"<>|\x00-\x1f]/g,'_').slice(0,100)}
 function addOption(select,value,title){const o=document.createElement('option');o.value=value;o.textContent=title;select.append(o)}
-function csvParse(src){const bom=src.replace(/^\uFEFF/,'');const first=(bom.split(/\r?\n/,1)[0]||'');const delim=['\t',',',';'].sort((a,b)=>countSep(first,b)-countSep(first,a))[0];let rows=[],row=[],part='',quote=false;for(let i=0;i<bom.length;i++){const c=bom[i];if(c==='"'){if(quote&&bom[i+1]==='"'){part+='"';i++}else quote=!quote}else if(c===delim&&!quote){row.push(part);part=''}else if((c==='\n'||c==='\r')&&!quote){if(c==='\r'&&bom[i+1]==='\n')i++;row.push(part);part='';if(row.some(v=>v!==''))rows.push(row);row=[]}else part+=c}row.push(part);if(row.some(v=>v!==''))rows.push(row);return rows}
+function csvParse(src){const bom=src.replace(/^\uFEFF/,'');const first=(bom.split(/\r?\n/,1)[0]||'');const delim=['\t',',',';'].sort((a,b)=>countSep(first,b)-countSep(first,a))[0];let rows=[],row=[],part='',quote=false;for(let i=0;i<bom.length;i++){const c=bom[i];if(c==='"'){if(quote&&bom[i+1]==='"'){part+='"';i++}else quote=!quote}else if(c===delim&&!quote){row.push(part);part=''}else if((c==='\n'||c==='\r')&&!quote){if(c==='\r'&&bom[i+1]==='\n')i++;row.push(part);part='';if(row.some(v=>v!==''))rows.push(row);if(rows.length>100000)throw Error('CSV/TSVは100,000行までです');row=[]}else part+=c}row.push(part);if(row.some(v=>v!==''))rows.push(row);return rows}
 function countSep(s,sep){let q=false,n=0;for(let i=0;i<s.length;i++){if(s[i]==='"'){if(q&&s[i+1]==='"')i++;else q=!q}else if(s[i]===sep&&!q)n++}return n}
 function normalizeTable(rows){if(!rows.length)return {headers:[],rows:[]};let width=0;for(const row of rows)if(row.length>width)width=row.length;const max=Math.min(width,250);const names=rows[0].slice(0,max).map((v,i)=>String(v||`列 ${i+1}`));const dedup=new Set();const headers=names.map((n,i)=>{let h=n,j=2;while(dedup.has(h))h=n+' ('+(j++)+')';dedup.add(h);return h});return {headers,rows:rows.slice(1).map(r=>r.slice(0,max))}}
 function uriResolve(base,target){if(target.startsWith('/'))return target.replace(/^\/+/, '');const parts=base.split('/').slice(0,-1).concat(target.split('/'));const result=[];for(const p of parts){if(p==='..')result.pop();else if(p && p!=='.')result.push(p)}return result.join('/')}
@@ -380,7 +382,7 @@ function lettersToIndex(s){let n=0;for(const ch of s){n=n*26+ch.charCodeAt(0)-64
 function excelSheet(doc,shared){const out=[];const rows=byTag(doc,'row');for(const r of rows){const rnum=parseInt(r.getAttribute('r')||String(out.length+1),10)-1;if(rnum>100000)throw Error('100,000行を超えるExcelは現在対象外です');const arr=[];for(const c of byTag(r,'c')){const addr=c.getAttribute('r')||'';const col=lettersToIndex((addr.match(/^[A-Z]+/)||['A'])[0]);if(col>249)continue;const type=c.getAttribute('t');const v=first(c,'v');let val='';if(type==='inlineStr'){const str=first(c,'is');val=str?byTag(str,'t').map(n=>n.textContent).join(''):''}else if(type==='s')val=shared[+v?.textContent]??'';else if(type==='b')val=v?.textContent==='1'?'TRUE':'FALSE';else if(v)val=(type==='e'||type==='str')?v.textContent:(numeric(v.textContent));if(val!==''&&!(typeof val==='number'&&Number.isNaN(val)))arr[col]=val}
 while(out.length<rnum)out.push([]);out[rnum]=arr}return normalizeTable(out)}
 async function readXlsx(file){if(file.size>35*1024*1024)throw Error('35 MBを超えるExcelはこの試作版では扱いません');const z=zipEntries(await file.arrayBuffer());const wb=await xmlRead(z,'xl/workbook.xml');let shared=[];if(z.files.has('xl/sharedStrings.xml')){const ss=await xmlRead(z,'xl/sharedStrings.xml');shared=byTag(ss,'si').map(si=>byTag(si,'t').map(t=>t.textContent).join(''))}const rel=await xmlRead(z,'xl/_rels/workbook.xml.rels');const rels=new Map(byTag(rel,'Relationship').map(r=>[r.getAttribute('Id'),r.getAttribute('Target')]));const outputs=[];for(const sheet of byTag(wb,'sheet')){const name=sheet.getAttribute('name');const id=sheet.getAttribute('r:id')||sheet.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id');const target=rels.get(id);if(!target)continue;const path=uriResolve('xl/workbook.xml',target);if(!z.files.has(path))continue;const table=excelSheet(await xmlRead(z,path),shared);outputs.push({name,...table})}if(!outputs.length)throw Error('読み取れるExcelシートがありません');return outputs}
-async function readFile(file){const ext=file.name.toLowerCase().split('.').pop();if(ext==='xlsx')return await readXlsx(file);if(ext==='csv'||ext==='tsv'){const txt=await file.text();return [{name:'データ',...normalizeTable(csvParse(txt))}]}throw Error('.xlsx、.csv、.tsv ファイルを選んでください')}
+async function readFile(file){if(file.size>35*1024*1024)throw Error('ファイルは35 MB以下にしてください');const ext=file.name.toLowerCase().split('.').pop();if(ext==='xlsx')return await readXlsx(file);if(ext==='csv'||ext==='tsv'){if(file.size>20*1024*1024)throw Error('CSV/TSVは20 MB以下にしてください');const txt=await file.text();return [{name:'データ',...normalizeTable(csvParse(txt))}]}throw Error('.xlsx、.csv、.tsv ファイルを選んでください')}
 function uiIsEnglish(){return $('ui-language')?.value==='en'}
 function displayedSheetName(book,sheet){
  return uiIsEnglish() && book && /\.(csv|tsv)$/i.test(book.filename) && sheet.name==='データ' ? 'Data' : sheet.name;
@@ -497,7 +499,37 @@ if(uiIsEnglish()){
 $('title').value='';$('xlabel').value='Bed volumes (BV)';$('ylabel').value='C / C₀';$('xscale').value='linear';$('yscale').value='linear';['xmin','xmax','ymin','ymax'].forEach(x=>$(x).value='');refreshSources();render()}
 async function onFiles(filelist){const files=Array.from(filelist);if(!files.length)return;status('ファイルを読み込んでいます…');let results=[],errors=[];for(const file of files){try{const sheets=await readFile(file);results.push({id:'f'+(++state.seq),filename:file.name,sheets})}catch(err){errors.push(file.name+': '+err.message)}}if(results.length){if(state.demo){state.xLabelOverrides={};state.xHiddenCategories=[];state.books=[];state.series=[];if(state.graphs)for(const g of state.graphs)g.series=[];state.demo=false}state.books.push(...results);refreshSources();render();status(`${results.length}ファイルを読み込みました。${errors.length?' 読み込めないファイル: '+errors.join(' / '):''}`,!!errors.length)}else status('読み込み失敗: '+errors.join(' / '),true)}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000)}
-function serializedSvg(){const svg=$('plot').cloneNode(true);svg.setAttribute('xmlns','http://www.w3.org/2000/svg');svg.setAttribute('width',$('plot').dataset.width||'980');svg.setAttribute('height',$('plot').dataset.height||'560');return new XMLSerializer().serializeToString(svg)}
+// Export only safe SVG graphics. Never serialize arbitrary DOM or external links.
+const SAFE_SVG_TAGS=new Set(['svg','g','defs','clipPath','rect','line','path','circle','ellipse','polygon','polyline','text','tspan','pattern']);
+const SAFE_SVG_ATTRS=new Set(['viewBox','preserveAspectRatio','id','class','x','y','x1','x2','y1','y2','width','height','cx','cy','r','rx','ry','points','d','transform','fill','fill-opacity','fill-rule','stroke','stroke-width','stroke-opacity','stroke-linecap','stroke-linejoin','stroke-dasharray','stroke-dashoffset','clip-path','opacity','font-family','font-size','font-weight','font-style','text-anchor','dominant-baseline','alignment-baseline','letter-spacing','paint-order','pointer-events','patternUnits','vector-effect','display']);
+function safeSvgXml(source){
+ const clone=node=>{
+  if(node.nodeType===Node.TEXT_NODE)return document.createTextNode(node.nodeValue||'');
+  if(node.nodeType!==Node.ELEMENT_NODE||node.namespaceURI!==svgNS||!SAFE_SVG_TAGS.has(node.localName))return null;
+  const copy=document.createElementNS(svgNS,node.localName);
+  for(const attr of node.attributes){
+   if(attr.namespaceURI||!SAFE_SVG_ATTRS.has(attr.name))continue;
+   const value=attr.value.trim();
+   if(value.length>150000||/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(value))continue;
+   if(/(?:javascript:|data:|https?:|@import)/i.test(value))continue;
+   if(/url\s*\(/i.test(value)&&!(['fill','stroke','clip-path'].includes(attr.name)&&/^url\(#[-\w:.]+\)$/i.test(value)))continue;
+   if(attr.name==='id'&&!/^[a-z_][\w:.-]{0,150}$/i.test(value))continue;
+   copy.setAttribute(attr.name,value);
+  }
+  for(const child of node.childNodes){const safe=clone(child);if(safe)copy.appendChild(safe)}
+  return copy;
+ };
+ const safe=clone(source);
+ if(!safe||safe.localName!=='svg')throw Error('SVGの形式が不正です');
+ safe.setAttribute('xmlns',svgNS);
+ return new XMLSerializer().serializeToString(safe);
+}
+function serializedSvg(){
+ const svg=$('plot').cloneNode(true);
+ svg.setAttribute('width',$('plot').dataset.width||'980');
+ svg.setAttribute('height',$('plot').dataset.height||'560');
+ return safeSvgXml(svg);
+}
 function exportSvg(){downloadBlob(new Blob([serializedSvg()],{type:'image/svg+xml;charset=utf-8'}),safeFilename($('title').value)+'.svg')}
 function exportPng(){const xml=serializedSvg(),url=URL.createObjectURL(new Blob([xml],{type:'image/svg+xml'})),im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=+($('plot').dataset.width||980)*2;c.height=+($('plot').dataset.height||560)*2;const ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(im,0,0,c.width,c.height);c.toBlob(blob=>blob&&downloadBlob(blob,safeFilename($('title').value)+'.png'),'image/png');URL.revokeObjectURL(url)};im.onerror=()=>{URL.revokeObjectURL(url);status('PNG変換に失敗しました。SVGで保存してください',true)};im.src=url}
 const globalColors=['xaxiscolor','yaxiscolor','plotfill','framecolor','legendcolor','legendfill','legendbordercolor'];
@@ -517,7 +549,8 @@ function saveSettings(){
   downloadBlob(new Blob([JSON.stringify({version:'0.7',activeGraph:state.activeGraph,graphs},null,2)],{type:'application/json'}),'research_visualizer_settings_v07.json');
 }
 function serializeSeries(x){const book=state.books.find(b=>b.id===x.ref.id),sheet=getSource(x.ref);return {filename:book?.filename,sheet:x.ref.sheet,xcol:sheet?.headers[x.x],ycol:sheet?.headers[x.y],label:x.label,color:x.color,visible:x.visible,barPattern:x.barPattern,barPatternColor:x.barPatternColor,markerShape:x.markerShape,markerSize:x.markerSize,markerBorderColor:x.markerBorderColor,markerBorderWidth:x.markerBorderWidth,lineColor:x.lineColor,lineWidth:x.lineWidth,lineDash:x.lineDash,colorTrans:x.colorTrans,markerBorderColorTrans:x.markerBorderColorTrans,lineColorTrans:x.lineColorTrans,errorMode:x.errorMode,errorType:x.errorType,errorColumnName:sheet?.headers[x.errorColumn],errorLowColumnName:sheet?.headers[x.errorLowColumn],errorHighColumnName:sheet?.headers[x.errorHighColumn],replicateColumnNames:(x.replicateColumns||[]).map(i=>sheet?.headers[i]).filter(Boolean)}}
-async function loadLegacySettings(file){try{const conf=JSON.parse(await file.text());if(!Array.isArray(conf.series))throw Error('作図設定の形式が異なります');let missing=[];const loaded=[];for(const s of conf.series){const b=state.books.find(b=>b.filename===s.filename),sh=b?.sheets.find(x=>x.name===s.sheet),xi=sh?.headers.indexOf(s.xcol),yi=sh?.headers.indexOf(s.ycol);if(!sh||xi<0||yi<0){missing.push(`${s.filename} / ${s.sheet}`);continue}loaded.push({sid:++state.seq,ref:{id:b.id,sheet:sh.name},x:xi,y:yi,label:s.label||s.ycol,color:/^#[0-9a-f]{6}$/i.test(s.color)?s.color:palette[loaded.length%palette.length],visible:s.visible!==false,markerShape:['circle','square','triangle','diamond','cross'].includes(s.markerShape)?s.markerShape:undefined,markerSize:Number.isFinite(+s.markerSize)&&s.markerSize!=null?+s.markerSize:undefined,markerBorderColor:/^#[0-9a-f]{6}$/i.test(s.markerBorderColor)?s.markerBorderColor:undefined,markerBorderWidth:Number.isFinite(+s.markerBorderWidth)&&s.markerBorderWidth!=null?+s.markerBorderWidth:undefined,lineColor:/^#[0-9a-f]{6}$/i.test(s.lineColor)?s.lineColor:undefined,lineWidth:Number.isFinite(+s.lineWidth)&&s.lineWidth!=null?+s.lineWidth:undefined,lineDash:['solid','dashed','dotted','dashdot'].includes(s.lineDash)?s.lineDash:undefined})}state.series=loaded;state.xHiddenCategories=[];for(const f of fields)if(conf.chart&&conf.chart[f]!==undefined){if($(f).type==='checkbox')$(f).checked=conf.chart[f]===true;else if(typeof conf.chart[f]==='string')$(f).value=conf.chart[f]};if(conf.axisDecor)applyAxisDecor(conf.axisDecor);if(conf.chart?.plottransparent)$('plotfilltrans').value='100';if(conf.chart?.frametransparent)$('framecolortrans').value='100';state.refs=Array.isArray(conf.references)?conf.references.filter(validReference).map(r=>({...r,rid:++state.seq})):[];renderReferences();if(conf.version==='0.2'){for(const f of ['xlabelsize','ylabelsize','xticksize','yticksize','legendsize','titlesize']){if(conf.chart?.[f]!=null)$(f).value=(Number(conf.chart[f])*72/96).toString()}}render();status(`設定を読み込みました。${loaded.length}系列を復元。${missing.length?'対応するExcelを先に読み込んでください: '+missing.join(', '):''}`,!!missing.length)}catch(err){status('設定を読み込めません: '+err.message,true)}}
+async function readSafeJson(file){if(!file||file.size>5*1024*1024||!/\.json$/i.test(file.name))throw Error('5 MB以下のJSONファイルを指定してください');return file.text()}
+async function loadLegacySettings(file){try{const conf=JSON.parse(await readSafeJson(file));if(!Array.isArray(conf.series))throw Error('作図設定の形式が異なります');let missing=[];const loaded=[];for(const s of conf.series){const b=state.books.find(b=>b.filename===s.filename),sh=b?.sheets.find(x=>x.name===s.sheet),xi=sh?.headers.indexOf(s.xcol),yi=sh?.headers.indexOf(s.ycol);if(!sh||xi<0||yi<0){missing.push(`${s.filename} / ${s.sheet}`);continue}loaded.push({sid:++state.seq,ref:{id:b.id,sheet:sh.name},x:xi,y:yi,label:s.label||s.ycol,color:/^#[0-9a-f]{6}$/i.test(s.color)?s.color:palette[loaded.length%palette.length],visible:s.visible!==false,markerShape:['circle','square','triangle','diamond','cross'].includes(s.markerShape)?s.markerShape:undefined,markerSize:Number.isFinite(+s.markerSize)&&s.markerSize!=null?+s.markerSize:undefined,markerBorderColor:/^#[0-9a-f]{6}$/i.test(s.markerBorderColor)?s.markerBorderColor:undefined,markerBorderWidth:Number.isFinite(+s.markerBorderWidth)&&s.markerBorderWidth!=null?+s.markerBorderWidth:undefined,lineColor:/^#[0-9a-f]{6}$/i.test(s.lineColor)?s.lineColor:undefined,lineWidth:Number.isFinite(+s.lineWidth)&&s.lineWidth!=null?+s.lineWidth:undefined,lineDash:['solid','dashed','dotted','dashdot'].includes(s.lineDash)?s.lineDash:undefined})}state.series=loaded;state.xHiddenCategories=[];for(const f of fields)if(conf.chart&&conf.chart[f]!==undefined){if($(f).type==='checkbox')$(f).checked=conf.chart[f]===true;else if(typeof conf.chart[f]==='string')$(f).value=conf.chart[f]};if(conf.axisDecor)applyAxisDecor(conf.axisDecor);if(conf.chart?.plottransparent)$('plotfilltrans').value='100';if(conf.chart?.frametransparent)$('framecolortrans').value='100';state.refs=Array.isArray(conf.references)?conf.references.filter(validReference).map(r=>({...r,rid:++state.seq})):[];renderReferences();if(conf.version==='0.2'){for(const f of ['xlabelsize','ylabelsize','xticksize','yticksize','legendsize','titlesize']){if(conf.chart?.[f]!=null)$(f).value=(Number(conf.chart[f])*72/96).toString()}}render();status(`設定を読み込みました。${loaded.length}系列を復元。${missing.length?'対応するExcelを先に読み込んでください: '+missing.join(', '):''}`,!!missing.length)}catch(err){status('設定を読み込めません: '+err.message,true)}}
 $('file').addEventListener('change',e=>onFiles(e.target.files));$('source').addEventListener('change',refreshColumns);$('ycol').addEventListener('change',updateSuggestedLabel);$('add').addEventListener('click',addSeries);for(const f of fields)$(f).addEventListener('input',draw);$('resetaxes').addEventListener('click',()=>{['xmin','xmax','ymin','ymax','xtickstep','ytickstep'].forEach(x=>$(x).value='');draw()});$('clear').addEventListener('click',()=>{state.series=[];render()});$('example').addEventListener('click',setDemo);$('exportsvg').addEventListener('click',exportSvg);$('exportpng').addEventListener('click',exportPng);$('savesettings').addEventListener('click',saveSettings);$('loadsettings').addEventListener('change',e=>e.target.files[0]&&loadSettings(e.target.files[0]));document.addEventListener('dragover',e=>{if(e.dataTransfer?.types.includes('Files')){e.preventDefault();document.body.classList.add('drop')}});document.addEventListener('dragleave',()=>document.body.classList.remove('drop'));document.addEventListener('drop',e=>{e.preventDefault();document.body.classList.remove('drop');onFiles(e.dataTransfer.files)});
 
 // v0.2: numeric formatting settings
@@ -1284,14 +1317,14 @@ $('savestyle').addEventListener('click',()=>{
 });
 $('loadstyle').addEventListener('change',async e=>{
  const file=e.target.files[0];if(!file)return;
- try{applyAppearance(JSON.parse(await file.text()))}catch(err){status('体裁を読み込めません: '+err.message,true)}
+ try{applyAppearance(JSON.parse(await readSafeJson(file)))}catch(err){status('体裁を読み込めません: '+err.message,true)}
  finally{e.target.value=''}
 });
 refreshAppearanceClipboard();
 
 async function loadSettings(file){
   try{
-    const conf=JSON.parse(await file.text());
+    const conf=JSON.parse(await readSafeJson(file));
     if(!['0.5','0.6','0.7'].includes(conf.version)){
       await loadLegacySettings(file);persistCurrentChart();renderGraphTabs();resetHistory();return;
     }
@@ -1626,13 +1659,13 @@ $('tab-figure').addEventListener('click',()=>switchPane('figure'));
 for(const id of ['figure-cols','figure-width','figure-height','figure-gap','figure-padding','figure-background','figure-labels'])
  $(id).addEventListener('input',renderFigurePreview);
 $('figure-svg').addEventListener('click',()=>{
- const xml=new XMLSerializer().serializeToString(figureElement());
+ const xml=safeSvgXml(figureElement());
  downloadBlob(new Blob([xml],{type:'image/svg+xml;charset=utf-8'}),'research_figure_panels.svg');
 });
 $('figure-png').addEventListener('click',()=>{
  const svg=figureElement(),w=+svg.getAttribute('width'),h=+svg.getAttribute('height');
  const scale=Math.min(2,8192/w,8192/h);
- const xml=new XMLSerializer().serializeToString(svg),url=URL.createObjectURL(new Blob([xml],{type:'image/svg+xml;charset=utf-8'}));
+ const xml=safeSvgXml(svg),url=URL.createObjectURL(new Blob([xml],{type:'image/svg+xml;charset=utf-8'}));
  const img=new Image();img.onload=()=>{
   const can=document.createElement('canvas');can.width=Math.round(w*scale);can.height=Math.round(h*scale);
   can.getContext('2d').drawImage(img,0,0,can.width,can.height);
@@ -1648,7 +1681,7 @@ $('figure-layout-save').addEventListener('click',()=>{
 $('figure-layout-load').addEventListener('change',async e=>{
  const file=e.target.files[0];if(!file)return;
  try{
-  const data=JSON.parse(await file.text());
+  const data=JSON.parse(await readSafeJson(file));
   if(data.kind!=='research-visualizer-figure-layout'||data.version!=='1.1'||!Array.isArray(data.order)||!Array.isArray(data.included)||!data.options)throw Error('Figure v1.1の配置JSONではありません');
   const max=state.graphs.length;
   figureState.order=[...new Set(data.order.filter(i=>Number.isInteger(i)&&i>=0&&i<max))];
