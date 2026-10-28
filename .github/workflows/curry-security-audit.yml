@@ -1,0 +1,29 @@
+name: Curry Records baseline security audit
+
+on:
+  pull_request:
+    paths:
+      - 'curry-record.html'
+      - 'tests/curry-security-audit.cjs'
+      - '.github/workflows/curry-security-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Collect baseline security findings
+        run: node tests/curry-security-audit.cjs
+        continue-on-error: true
