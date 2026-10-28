@@ -1,10 +1,11 @@
-name: Curry Records baseline security audit
+name: Curry Records security regression
 
 on:
   pull_request:
     paths:
       - 'curry-record.html'
       - 'tests/curry-security-audit.cjs'
+      - 'tests/curry-csp-smoke.cjs'
       - '.github/workflows/curry-security-audit.yml'
   workflow_dispatch:
 
@@ -16,14 +17,17 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
       - name: Install browser
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
           npx playwright install --with-deps chromium
-      - name: Collect baseline security findings
+      - name: Verify Curry Records security baseline
         run: node tests/curry-security-audit.cjs
-        continue-on-error: true
+      - name: Verify CSP and browser functionality
+        run: node tests/curry-csp-smoke.cjs
