@@ -28,7 +28,7 @@ const count = expression => (html.match(expression) || []).length;
       const q = selector => [...document.querySelectorAll(selector)];
       const csp = document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.getAttribute('content') || '';
       const blankLinks = q('a[target="_blank"]').filter(a => !a.relList.contains('noopener'));
-      const dangerousLinks = q('a[href]').filter(a => /^\\s*javascript:/i.test(a.getAttribute('href')));
+      const dangerousLinks = q('a[href]').filter(a => /^\s*javascript:/i.test(a.getAttribute('href')));
       const activeContent = q('iframe,object,embed');
       const inlineHandlers = q('*').reduce((total, el) => total +
         [...el.attributes].filter(a => /^on[a-z]+$/i.test(a.name)).length, 0);
@@ -37,8 +37,8 @@ const count = expression => (html.match(expression) || []).length;
         hasBody: !!document.body,
         titlePresent: !!document.title.trim(),
         hasCsp: !!csp,
-        hasDefaultDeny: /(?:^|;)\\s*default-src\\s+'none'/i.test(csp),
-        hasConnectDeny: /(?:^|;)\\s*connect-src\\s+'none'/i.test(csp),
+        hasDefaultDeny: /(?:^|;)\s*default-src\s+'none'/i.test(csp),
+        hasConnectDeny: /(?:^|;)\s*connect-src\s+'none'/i.test(csp),
         inlineScripts: q('script:not([src])').length,
         externalScripts: externalScripts.length,
         activeContent: activeContent.length,
@@ -51,11 +51,11 @@ const count = expression => (html.match(expression) || []).length;
       };
     });
     const hints = {
-      evalCalls: count(/\\beval\\s*\\(/g),
-      functionConstructors: count(/\\bnew\\s+Function\\s*\\(/g),
-      documentWrites: count(/\\bdocument\\.write\\s*\\(/g),
-      innerHtmlAssignments: count(/\\.innerHTML\\s*=/g),
-      networkApiMentions: count(/\\b(?:fetch|XMLHttpRequest|WebSocket|sendBeacon)\\b/g)
+      evalCalls: count(/\beval\s*\(/g),
+      functionConstructors: count(/\bnew\s+Function\s*\(/g),
+      documentWrites: count(/\bdocument\.write\s*\(/g),
+      innerHtmlAssignments: count(/\.innerHTML\s*=/g),
+      networkApiMentions: count(/\b(?:fetch|XMLHttpRequest|WebSocket|sendBeacon)\b/g)
     };
     console.log('Curry Records baseline audit (no user records printed)');
     console.log(JSON.stringify({sourceBytes:Buffer.byteLength(html,'utf8'), browser:report, heuristicSourceCounts:hints,
