@@ -373,8 +373,54 @@ function csvParse(src){const bom=src.replace(/^\uFEFF/,'');const first=(bom.spli
 function countSep(s,sep){let q=false,n=0;for(let i=0;i<s.length;i++){if(s[i]==='"'){if(q&&s[i+1]==='"')i++;else q=!q}else if(s[i]===sep&&!q)n++}return n}
 function normalizeTable(rows){if(!rows.length)return {headers:[],rows:[]};let width=0;for(const row of rows)if(row.length>width)width=row.length;const max=Math.min(width,250);const names=rows[0].slice(0,max).map((v,i)=>String(v||`列 ${i+1}`));const dedup=new Set();const headers=names.map((n,i)=>{let h=n,j=2;while(dedup.has(h))h=n+' ('+(j++)+')';dedup.add(h);return h});return {headers,rows:rows.slice(1).map(r=>r.slice(0,max))}}
 function uriResolve(base,target){if(target.startsWith('/'))return target.replace(/^\/+/, '');const parts=base.split('/').slice(0,-1).concat(target.split('/'));const result=[];for(const p of parts){if(p==='..')result.pop();else if(p && p!=='.')result.push(p)}return result.join('/')}
-function zipEntries(buffer){const b=new DataView(buffer);const a=new Uint8Array(buffer);let end=-1;for(let p=a.length-22;p>=Math.max(0,a.length-65557);p--){if(b.getUint32(p,true)===0x06054b50){end=p;break}}if(end<0)throw Error('Excel ZIP の目次が見つかりません');const size=b.getUint32(end+12,true),start=b.getUint32(end+16,true);if(size===0xffffffff||start===0xffffffff)throw Error('ZIP64形式のExcelにはまだ対応していません');let pos=start;const files=new Map();const dec=new TextDecoder();while(pos<start+size){if(b.getUint32(pos,true)!==0x02014b50)throw Error('Excel ZIPの目次が不正です');const flags=b.getUint16(pos+8,true),method=b.getUint16(pos+10,true),len=b.getUint32(pos+20,true),nameLen=b.getUint16(pos+28,true),extraLen=b.getUint16(pos+30,true),commentLen=b.getUint16(pos+32,true),local=b.getUint32(pos+42,true);if(flags&1)throw Error('暗号化Excelには対応していません');const name=dec.decode(a.slice(pos+46,pos+46+nameLen));files.set(name,{method,len,local});pos+=46+nameLen+extraLen+commentLen}return {buffer,files}}
-async function zipRead(z,path){const meta=z.files.get(path);if(!meta)throw Error('Excel 内の '+path+' が見つかりません');const b=new DataView(z.buffer);const p=meta.local;if(b.getUint32(p,true)!==0x04034b50)throw Error('ZIP 内のファイルが壊れています');const start=p+30+b.getUint16(p+26,true)+b.getUint16(p+28,true);const data=z.buffer.slice(start,start+meta.len);if(meta.method===0)return new Uint8Array(data);if(meta.method!==8)throw Error('未対応のZIP圧縮方式です');if(!('DecompressionStream' in window))throw Error('このブラウザはExcel展開に対応していません。新しいEdge/Chromeで試してください');return new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer())}
+// Reject ZIP bombs and malformed workbook offsets before allocating decompressed data.
+const MAX_XLSX_ENTRY_BYTES=80*1024*1024;
+const MAX_XLSX_TOTAL_BYTES=256*1024*1024;
+function zipEntries(buffer){
+ const b=new DataView(buffer),a=new Uint8Array(buffer);let end=-1;
+ for(let p=a.length-22;p>=Math.max(0,a.length-65557);p--){if(b.getUint32(p,true)===0x06054b50){end=p;break}}
+ if(end<0)throw Error('Excel ZIP の目次が見つかりません');
+ const size=b.getUint32(end+12,true),start=b.getUint32(end+16,true);
+ if(size===0xffffffff||start===0xffffffff||start+size>a.length)throw Error('ZIPのサイズまたは形式が不正です');
+ let pos=start,total=0,count=0;const files=new Map(),dec=new TextDecoder();
+ while(pos<start+size){
+  if(++count>2000||pos+46>a.length||b.getUint32(pos,true)!==0x02014b50)throw Error('Excel ZIPの目次が不正です');
+  const flags=b.getUint16(pos+8,true),method=b.getUint16(pos+10,true);
+  const len=b.getUint32(pos+20,true),rawLen=b.getUint32(pos+24,true);
+  const nameLen=b.getUint16(pos+28,true),extraLen=b.getUint16(pos+30,true),commentLen=b.getUint16(pos+32,true),local=b.getUint32(pos+42,true);
+  if(flags&1)throw Error('暗号化Excelには対応していません');
+  if(len===0xffffffff||rawLen===0xffffffff||rawLen>MAX_XLSX_ENTRY_BYTES||(total+=rawLen)>MAX_XLSX_TOTAL_BYTES)throw Error('Excel展開後のサイズが大きすぎます');
+  if(pos+46+nameLen+extraLen+commentLen>start+size)throw Error('Excel ZIPの目次が不正です');
+  const name=dec.decode(a.slice(pos+46,pos+46+nameLen));
+  files.set(name,{method,len,rawLen,local});
+  pos+=46+nameLen+extraLen+commentLen;
+ }
+ return {buffer,files};
+}
+async function zipRead(z,path){
+ const meta=z.files.get(path);if(!meta)throw Error('Excel 内の '+path+' が見つかりません');
+ const b=new DataView(z.buffer),p=meta.local;
+ if(p+30>b.byteLength||b.getUint32(p,true)!==0x04034b50)throw Error('ZIP 内のファイルが壊れています');
+ const start=p+30+b.getUint16(p+26,true)+b.getUint16(p+28,true);
+ if(start+meta.len>b.byteLength)throw Error('ZIP 内のファイルサイズが不正です');
+ const data=z.buffer.slice(start,start+meta.len);
+ if(meta.method===0){if(meta.len>MAX_XLSX_ENTRY_BYTES)throw Error('Excel展開後のサイズが大きすぎます');return new Uint8Array(data)}
+ if(meta.method!==8)throw Error('未対応のZIP圧縮方式です');
+ if(!('DecompressionStream' in window))throw Error('このブラウザはExcel展開に対応していません。新しいEdge/Chromeで試してください');
+ const reader=new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader(),chunks=[];
+ let total=0;
+ try{
+  while(true){
+   const {value,done}=await reader.read();if(done)break;
+   total+=value.byteLength;
+   if(total>MAX_XLSX_ENTRY_BYTES||total>meta.rawLen)throw Error('Excel展開サイズが宣言値を超えました');
+   chunks.push(value);
+  }
+ }catch(err){await reader.cancel().catch(()=>{});throw err}
+ const result=new Uint8Array(total);let offset=0;
+ for(const chunk of chunks){result.set(chunk,offset);offset+=chunk.byteLength}
+ return result;
+}
 async function xmlRead(z,path){const doc=new DOMParser().parseFromString(new TextDecoder('utf-8').decode(await zipRead(z,path)),'application/xml');if(doc.querySelector('parsererror'))throw Error(path+' のXMLが読めません');return doc}
 function byTag(node,name){return Array.from(node.getElementsByTagName(name))}
 function first(node,name){return node.getElementsByTagName(name)[0]}
