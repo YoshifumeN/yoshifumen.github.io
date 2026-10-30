@@ -329,49 +329,65 @@ header .tag{background:transparent;border:0;padding:0;color:#6c756b;border-radiu
 .save-content .style-template-controls{margin-top:0}
 @media(max-width:1150px){.workspace-command-row .chart-quick-tools{justify-content:flex-start}}
 @media(max-width:630px){.workspace-command-row{gap:4px}.workspace-command-row .workspace-tabs .tab{padding:5px 4px;font-size:11px}.chart-quick-tools .btn{padding:5px 5px}}
+
+/* Standalone editing workspace: Save next to the language selector. */
+header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-items:center}
+.header-controls{display:flex;align-items:center;justify-content:flex-end;gap:10px 16px;flex-wrap:wrap;min-width:0}
+.header-save{position:relative;flex:none;min-width:0;border:0!important;padding:0!important;margin:0!important;box-shadow:none!important;background:transparent!important;z-index:60}
+.header-save .save-details>summary{border:1px solid #b8cdb7;border-radius:2px;padding:5px 9px;min-height:33px;background:#fff;gap:10px}
+.header-save .save-details>summary:hover{background:#f1f6f0;border-color:#95b395}
+.header-save .save-details>summary h2{font-size:12px;white-space:nowrap;margin:0;color:darkgreen}
+.header-save .save-details>summary h2 b{font-size:12px}
+.header-save .save-details>summary::after{content:"▾";font-size:12px}
+.header-save .save-details[open]>summary::after{content:"▴"}
+.header-save .save-details[open] .save-content{position:absolute;right:0;top:calc(100% + 6px);width:min(360px,calc(100vw - 24px));max-height:min(72vh,620px);overflow-y:auto;overscroll-behavior:contain;padding:13px 14px;border:1px solid #d5e0d2;background:#fff;box-shadow:0 10px 28px rgba(19,45,20,.15);z-index:1000}
+.header-save .save-content .style-template-controls{margin-top:0}
+@media(max-width:650px){header{align-items:flex-start}.header-controls{justify-content:flex-start;gap:7px 10px}.header-controls .tag{flex-basis:100%}.header-save .save-details[open] .save-content{right:auto;left:0}}
 </style>
 </head>
 <body>
-<nav class="site-nav" aria-label="Yoshifumi Nakazawa website">
-  <a href="https://yoshifumen.github.io/">Home</a>
-  <a href="https://yoshifumen.github.io/research.html">Research</a>
-  <a href="https://yoshifumen.github.io/publications.html">Publications</a>
-  <a href="https://yoshifumen.github.io/presentations.html">Presentations</a>
-  <a href="https://yoshifumen.github.io/cv.html">CV</a>
-  <a href="https://yoshifumen.github.io/beyond-the-lab.html">Beyond the Lab</a>
-</nav>
-<header><div><h1>Research Visualizer <span style="font-size:12px;font-weight:500;color:#b8cee1">v1.7.5</span></h1></div><div class="tag">LOCAL ONLY · オフライン動作</div><div class="lang-picker"><label for="ui-language">言語 / Language</label><select id="ui-language" aria-label="UI language"><option value="ja">日本語</option><option value="en">English</option></select></div></header>
+<header><div><h1>Research Visualizer <span style="font-size:12px;font-weight:500;color:#b8cee1">v1.7.5</span></h1></div><div class="header-controls"><div class="tag">LOCAL ONLY · オフライン動作</div><section class="step save-panel header-save"><details class="save-details"><summary><h2><b>5</b> 保存・再利用</h2></summary><div class="save-content"><div class="legacy-single-export" hidden><div class="grid2"><button id="exportsvg" class="btn soft">SVGで保存</button><button id="exportpng" class="btn soft">PNGで保存</button></div></div>
+<div class="style-template-controls">
+  <strong>グラフの体裁テンプレート</strong>
+  <p class="desc">色・形・太さ・軸・凡例・基準線などを保存して別のグラフに適用。データ・凡例名・タイトルと軸ラベルの文章は変更しません。</p>
+  <div class="grid2"><button id="copy-style" class="btn soft">体裁をコピー</button><button id="paste-style" class="btn soft" disabled>体裁を貼り付け</button></div>
+  <div class="grid2" style="margin-top:7px"><button id="savestyle" class="btn white">体裁を保存</button><label class="btn white" style="text-align:center;cursor:pointer">体裁を読み込んで適用<input id="loadstyle" type="file" accept=".json,application/json" hidden></label></div>
+  <p id="style-copy-status" class="desc" aria-live="polite">まだ体裁をコピーしていません。</p>
+</div>
+<div class="grid2" style="margin-top:9px"><button id="savesettings" class="btn white">設定を保存</button><label class="btn white" style="text-align:center;cursor:pointer">設定を読み込む<input id="loadsettings" type="file" accept=".json,application/json" hidden></label></div>
+<p class="desc">「設定」はデータとの対応も含む作業全体。「体裁」は別グラフへ書式だけを移します。Excelの数値自体はどちらにも含めません。</p>
+</div></details></section><div class="lang-picker"><label for="ui-language">言語 / Language</label><select id="ui-language" aria-label="UI language"><option value="ja">日本語</option><option value="en">English</option></select></div></div></header>
 <main class="app">
 <aside class="panel" aria-label="作図設定"><div class="steps-scroll" id="steps-scroll">
-<section class="step"><h2><b>1</b> データを開く</h2>
+<section class="step"><h2><b>1</b> ファイルを開く</h2>
 <label class="load-btn">＋ Excel / CSV を選ぶ<input id="file" type="file" multiple accept=".xlsx,.csv,.tsv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></label>
 <p class="desc">Excel / CSV / TSV を読み込み（ドラッグ＆ドロップ可）。</p>
 <div class="dataset-list" id="dataset-list"></div>
 </section>
-<section class="step"><h2><b>2</b> 系列を追加する</h2>
+<section class="step"><h2><b>2</b> データを追加する</h2>
 <div class="field"><label for="source">ファイル / シート</label><select id="source"></select></div>
 <div class="grid2"><div class="field"><label for="xcol">X列</label><select id="xcol"></select></div><div class="field"><label for="ycol">Y列</label><select id="ycol"></select></div></div>
-<div class="field"><label for="slabel">凡例の名前</label><input id="slabel" type="text" placeholder="例：物質A / X=0.25"></div>
-<button id="add" class="btn full">＋ この系列を重ねる</button>
-<div class="batch-series"><strong>系列をまとめて追加</strong><div class="field"><label for="bulk-y-columns">Y列を複数選択（Ctrl / Shiftで複数選択）</label><select id="bulk-y-columns" multiple size="5"></select></div><button id="bulk-add-series" class="btn soft full" type="button">＋ 選択した列を一括追加</button></div>
+<input id="slabel" type="hidden" value="">
+<button id="add" class="btn full">＋ データを追加する</button>
+<div class="batch-series"><strong id="bulk-series-title">まとめて追加（Ctrl / Shiftで複数選択）</strong><div class="field"><select id="bulk-y-columns" multiple size="5" aria-labelledby="bulk-series-title"></select></div><button id="bulk-add-series" class="btn soft full" type="button">＋ 選択した列を一括追加</button></div>
 <div id="series-list" class="series-list"></div>
 <div class="bulk-marker-border">
- <strong>全プロットの枠線を一括変更</strong>
- <p class="desc">点や棒の枠線だけをまとめて変更します。塗りつぶし色・線の色には影響しません。</p>
- <div class="grid2"><div class="field"><label for="bulk-border-color">枠線の色</label><input type="color" id="bulk-border-color" value="#333333"></div><div class="field"><label for="bulk-border-alpha">透明度 (%)</label><input type="number" id="bulk-border-alpha" value="0" min="0" max="100" step="1"></div></div>
+ <strong>枠線を一括変更</strong>
+ 
+ <div class="grid2"><div class="field"><label for="bulk-border-color">色</label><input type="color" id="bulk-border-color" value="#333333"></div><div class="field"><label for="bulk-border-alpha">透明度 (%)</label><input type="number" id="bulk-border-alpha" value="0" min="0" max="100" step="1"></div></div>
  <div class="grid2"><div class="field"><label for="bulk-border-width">太さ (px)</label><input type="number" id="bulk-border-width" value="1.5" min="0" max="12" step="0.25"></div><div class="field"><label for="bulk-border-scope">変更する範囲</label><select id="bulk-border-scope"><option value="chart">このグラフの全系列</option><option value="all">全グラフの全系列</option></select></div></div>
- <button class="btn small soft full" id="bulk-border-apply" type="button">枠線を一括適用</button>
+ <button class="btn small soft full" id="bulk-border-apply" type="button">適用</button>
 </div>
 <div class="batch-series"><strong>系列の色を一括変更</strong>
  <div class="field"><label for="bulk-palette">配色</label><select id="bulk-palette"><option value="rainbow">虹色（色相順）</option><option value="saturation">青系（彩度変化）</option><option value="gradient">青 → 赤（連続変化）</option><option value="viridis">Viridis風（連続色）</option><option value="gray">グレースケール</option><option value="categorical">標準配色</option></select></div>
  <div class="field"><label for="bulk-palette-scope">変更する範囲</label><select id="bulk-palette-scope"><option value="chart">このグラフの全系列</option><option value="all">全グラフの全系列</option></select></div>
- <button id="bulk-palette-apply" type="button" class="btn soft full">配色を一括適用</button>
+ <button id="bulk-palette-apply" type="button" class="btn soft full">適用</button>
 </div></section>
 <section class="step"><h2><b>3</b> グラフの体裁</h2>
 <div class="field"><label for="title">タイトル（空白でもOK）</label><input id="title" placeholder="Breakthrough curves"></div>
 <div class="grid2"><div class="field"><label for="xlabel">X軸ラベル</label><input id="xlabel" value="Bed volumes (BV)"></div><div class="field"><label for="ylabel">Y軸ラベル</label><input id="ylabel" value="C / C₀"></div></div>
-<div class="grid2"><div class="field"><label for="plotmode">表示形式</label><select id="plotmode"><option value="line-points">線＋点</option><option value="points">散布図（点のみ）</option><option value="line">線のみ</option><option value="step">階段線</option><option value="area">面グラフ</option><option value="bar-grouped">集合棒グラフ</option><option value="bar-stacked">積み上げ棒グラフ</option><option value="bar-percent">100%積み上げ棒グラフ</option><option value="histogram">ヒストグラム</option><option value="boxplot">箱ひげ図</option></select></div><div class="field"><label for="markersize">新規系列の点の半径 (px)</label><input id="markersize" type="number" step="0.5" min="0.5" max="24" value="3.5"></div></div><div class="data-label-controls"><strong>データラベル</strong>
- <p class="data-label-hint">棒の上や各プロットに値を表示できます。積み上げ棒では「合計値」を推奨します。</p><div class="grid2"><div class="field"><label for="datalabelmode">表示</label><select id="datalabelmode"><option value="none">表示しない</option><option value="value">各値を表示</option><option value="total">各項目の合計を表示</option></select></div><div class="field"><label for="datalabeldecimals">小数桁</label><input id="datalabeldecimals" type="number" min="0" max="8" step="1" value="1"></div></div>
+<div class="grid2"><div class="field"><label for="plotmode">表示形式</label><select id="plotmode"><option value="line-points">線＋点</option><option value="points">散布図（点のみ）</option><option value="line">線のみ</option><option value="step">階段線</option><option value="area">面グラフ</option><option value="bar-grouped">集合棒グラフ</option><option value="bar-stacked">積み上げ棒グラフ</option><option value="bar-percent">100%積み上げ棒グラフ</option><option value="histogram">ヒストグラム</option><option value="boxplot">箱ひげ図</option></select></div><div class="field"><label for="markersize">新規系列の点の半径 (px)</label><input id="markersize" type="number" step="0.5" min="0.5" max="24" value="3.5"></div></div><div class="data-label-controls"><strong>データラベル（プロットの数値を表示）</strong>
+ <div class="grid2"><div class="field"><label for="datalabelmode">表示</label><select id="datalabelmode"><option value="none">表示しない</option><option value="value">各値を表示</option><option value="total">各項目の合計を表示</option></select></div><div class="field"><label for="datalabeldecimals">小数桁</label><input id="datalabeldecimals" type="number" min="0" max="8" step="1" value="1"></div></div>
  <div class="grid2"><div class="field"><label for="datalabelsize">文字サイズ (pt)</label><input id="datalabelsize" type="number" min="6" max="24" step="0.5" value="9"></div><div class="field"><label for="datalabelcolor">文字色</label><input id="datalabelcolor" type="color" value="#243448"></div></div>
 </div>
 <div class="legend-quick-controls" id="legend-quick-controls"><strong id="legend-quick-title">凡例の配置・段数</strong>
@@ -441,17 +457,7 @@ header .tag{background:transparent;border:0;padding:0;color:#6c756b;border-radiu
 <div class="grid2"><button id="add-hline" class="btn soft">＋ 水平線 (Y=1)</button><button id="add-vline" class="btn soft">＋ 垂直線</button></div>
 <div class="reference-list" id="reference-list"></div>
 </section>
-</div><section class="step save-panel"><details class="save-details"><summary><h2><b>5</b> 保存・再利用</h2></summary><div class="save-content"><div class="legacy-single-export" hidden><div class="grid2"><button id="exportsvg" class="btn soft">SVGで保存</button><button id="exportpng" class="btn soft">PNGで保存</button></div></div>
-<div class="style-template-controls">
-  <strong>グラフの体裁テンプレート</strong>
-  <p class="desc">色・形・太さ・軸・凡例・基準線などを保存して別のグラフに適用。データ・凡例名・タイトルと軸ラベルの文章は変更しません。</p>
-  <div class="grid2"><button id="copy-style" class="btn soft">体裁をコピー</button><button id="paste-style" class="btn soft" disabled>体裁を貼り付け</button></div>
-  <div class="grid2" style="margin-top:7px"><button id="savestyle" class="btn white">体裁を保存</button><label class="btn white" style="text-align:center;cursor:pointer">体裁を読み込んで適用<input id="loadstyle" type="file" accept=".json,application/json" hidden></label></div>
-  <p id="style-copy-status" class="desc" aria-live="polite">まだ体裁をコピーしていません。</p>
 </div>
-<div class="grid2" style="margin-top:9px"><button id="savesettings" class="btn white">設定を保存</button><label class="btn white" style="text-align:center;cursor:pointer">設定を読み込む<input id="loadsettings" type="file" accept=".json,application/json" hidden></label></div>
-<p class="desc">「設定」はデータとの対応も含む作業全体。「体裁」は別グラフへ書式だけを移します。Excelの数値自体はどちらにも含めません。</p>
-</div></details></section>
 </aside>
 <section class="view">
 <div class="graph-toolbar"><div id="graph-tabs" class="graph-tabs" role="tablist" aria-label="グラフを選択"></div><div class="graph-actions"><button class="btn small soft" id="add-graph">＋ グラフ追加</button><button class="btn small white" id="clone-graph">複製</button><button class="btn small danger" id="remove-graph">削除</button></div></div>
@@ -642,7 +648,7 @@ function availableSources(){return state.books.flatMap(b=>b.sheets.map(s=>({b,s}
 function refreshSources(){const items=availableSources();$('dataset-list').replaceChildren();for(const b of state.books){const ch=document.createElement('div');ch.className='dataset-chip';ch.title=b.filename;const name=document.createElement('span');name.textContent=b.filename;const bt=document.createElement('button');bt.type='button';bt.textContent='×';bt.title='このデータを削除（関連する系列も削除）';bt.setAttribute('aria-label',b.filename+' を削除');bt.addEventListener('click',()=>removeLoadedBook(b.id));ch.append(name,bt);$('dataset-list').append(ch)}const old=$('source').value;$('source').replaceChildren();items.forEach(({b,s})=>addOption($('source'),JSON.stringify([b.id,s.name]),sourceName(b,s)));if([...$('source').options].some(o=>o.value===old))$('source').value=old;refreshColumns();refreshDataView()}
 function refreshColumns(){const input=$('source').value;const [id,name]=input?JSON.parse(input):[null,null];const s=getSource({id,sheet:name});const preX=$('xcol').value,preY=$('ycol').value;$('xcol').replaceChildren();$('ycol').replaceChildren();if(!s){refreshBulkColumns();return;}s.headers.forEach((h,i)=>{addOption($('xcol'),String(i),h);addOption($('ycol'),String(i),h)});const maybeBV=s.headers.findIndex(h=>/^(?:BV|bed.?volumes?|time|elapsed|x)$/i.test(h.trim()));$('xcol').value=String(maybeBV>=0?maybeBV:0);$('ycol').value=String(s.headers.length>1?1:0);if([...$('xcol').options].some(o=>o.value===preX))$('xcol').value=preX;if([...$('ycol').options].some(o=>o.value===preY))$('ycol').value=preY;updateSuggestedLabel();refreshBulkColumns()}
 function updateSuggestedLabel(){const [id,name]=$('source').value?JSON.parse($('source').value):[null,null];const s=getSource({id,sheet:name});if(s){const b=state.books.find(b=>b.id===id);$('slabel').placeholder=displayedSheetName(b,s)+' · '+(s.headers[$('ycol').value]||'Y')}}
-function addSeries(){const [id,name]=$('source').value?JSON.parse($('source').value):[null,null];const sheet=getSource({id,sheet:name});if(!sheet)return status('先にExcelまたはCSVを読み込んでください',true);const xi=+$('xcol').value,yi=+$('ycol').value;if(!Number.isInteger(xi)||!Number.isInteger(yi))return;state.series.push({sid:++state.seq,ref:{id,sheet:name},x:xi,y:yi,label:$('slabel').value.trim()||`${sheet.name} · ${sheet.headers[yi]}`,color:palette[(state.series.length)%palette.length],visible:true});$('slabel').value='';render()}
+function addSeries(){const [id,name]=$('source').value?JSON.parse($('source').value):[null,null];const sheet=getSource({id,sheet:name});if(!sheet)return status('先にExcelまたはCSVを読み込んでください',true);const xi=+$('xcol').value,yi=+$('ycol').value;if(!Number.isInteger(xi)||!Number.isInteger(yi))return;state.series.push({sid:++state.seq,ref:{id,sheet:name},x:xi,y:yi,label:sheet.headers[yi]||sheet.name,color:palette[(state.series.length)%palette.length],visible:true});$('slabel').value='';render()}
 function renderSeries(){
  const host=$('series-list');host.replaceChildren();state.series.forEach((s,i)=>{
   const line=document.createElement('div');line.className='series-entry';line.dataset.seriesId=String(s.sid);
@@ -2287,5 +2293,18 @@ $('ui-language').addEventListener('change',()=>{
 syncSyntheticDemoLanguage();
 localizeControls();
 
+
+/* Compact UI labels introduced October 30. */
+Object.assign(i18nDictionary,{
+ 'ファイルを開く':'Open file',
+ 'データを追加する':'Add data',
+ '＋ データを追加する':'+ Add data',
+ 'まとめて追加（Ctrl / Shiftで複数選択）':'Add multiple (Ctrl / Shift select)',
+ '枠線を一括変更':'Batch outline style',
+ '色':'Color',
+ '適用':'Apply',
+ 'データラベル（プロットの数値を表示）':'Data labels (show plot values)'
+});
+localizeControls();
 </script>
 </body></html>
