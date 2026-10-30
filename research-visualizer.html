@@ -357,10 +357,22 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 .legend-quick-controls,.legend-quick-controls .legend-layout-controls{border:0!important;box-shadow:none!important;background:transparent!important;border-radius:0;padding-left:0;padding-right:0}
 #bulk-appearance-details{margin-bottom:12px}
 .new-series-defaults{margin-top:9px}
+
+.rv-recovery{border-bottom:1px solid #dce5d9;padding:0 0 12px;margin:0 0 13px}
+.rv-recovery>label{display:flex;align-items:center;gap:7px;font-size:12px;color:darkgreen;font-weight:700}
+.rv-recovery input{accent-color:darkgreen}
+.rv-recovery .desc{font-size:11px;margin:6px 0}
+.rv-recovery .btn{font-size:11px;padding:5px}
 </style>
 </head>
 <body>
 <header><div><h1>Research Visualizer <span style="font-size:12px;font-weight:500;color:#b8cee1">v1.7.5</span></h1></div><div class="header-controls"><div class="tag">LOCAL ONLY · オフライン動作</div><section class="step save-panel header-save"><details class="save-details"><summary><h2>保存・再利用</h2></summary><div class="save-content"><div class="legacy-single-export" hidden><div class="grid2"><button id="exportsvg" class="btn soft">SVGで保存</button><button id="exportpng" class="btn soft">PNGで保存</button></div></div>
+<div class="rv-recovery">
+ <label><input id="rv-enable" type="checkbox"> 再読み込み後も復元</label>
+ <p class="desc">データ・グラフ・Undo履歴をこのブラウザに保存します。外部送信なし。</p>
+ <div class="grid2"><button id="rv-save" class="btn white" type="button">今すぐ保存</button><button id="rv-clear" class="btn white" type="button">保存を削除</button></div>
+ <p id="rv-state" class="desc" aria-live="polite"></p>
+</div>
 <div class="style-template-controls">
   <strong>グラフの体裁テンプレート</strong>
   <p class="desc">色・軸・凡例などの体裁を保存・適用します。</p>
@@ -2364,5 +2376,136 @@ translateValue=function(raw){
 $('ui-language').addEventListener('change',()=>{renderGraphTabs();localizeControls()});
 renderGraphTabs();
 localizeControls();
+
+/* Offline IndexedDB workspace recovery; no remote transfer. */
+const rvDBName='rv-local-recovery-v1',rvKey='workspace',rvChoice='rv-recovery-enabled-v1';
+let rvEnabled=true,rvRestoring=true,rvSaveTimer=0,rvDbPromise=null,rvPending=Promise.resolve(),rvSaveSerial=0;
+const rvStatusEl=$('rv-state');
+function rvMsg(ja,en){rvStatusEl.dataset.ja=ja;rvStatusEl.dataset.en=en;rvStatusEl.textContent=uiIsEnglish()?en:ja}
+function rvDB(){
+ if(rvDbPromise)return rvDbPromise;
+ rvDbPromise=new Promise((resolve,reject)=>{
+  if(!window.indexedDB){reject(Error('IndexedDB unavailable'));return}
+  const q=indexedDB.open(rvDBName,1);
+  q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('state'))q.result.createObjectStore('state')};
+  q.onsuccess=()=>resolve(q.result);
+  q.onerror=()=>reject(q.error||Error('Database open failed'));
+  q.onblocked=()=>reject(Error('Database blocked'));
+ }).catch(e=>{rvDbPromise=null;throw e});
+ return rvDbPromise;
+}
+async function rvTransaction(mode,fun){
+ const db=await rvDB();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction('state',mode),req=fun(tx.objectStore('state'));
+  if(mode==='readonly')req.onsuccess=()=>resolve(req.result);
+  else tx.oncomplete=()=>resolve(true);
+  tx.onerror=()=>reject(tx.error||Error('Transaction failed'));
+  tx.onabort=()=>reject(tx.error||Error('Transaction aborted'));
+  if(mode==='readonly')req.onerror=()=>reject(req.error||Error('Read failed'));
+ });
+}
+function rvCapture(){
+ const now=snapshot(),needed=new Set(state.books.map(b=>b.id));
+ for(const raw of [now,...undoStack,...redoStack])try{for(const id of JSON.parse(raw).bookIds||[])needed.add(id)}catch(_){}
+ const books=[...needed].map(id=>historyBookRegistry.get(id)||state.books.find(b=>b.id===id)).filter(Boolean);
+ ensureFigureOrder();
+ return {
+  version:1,books,current:now,undo:[...undoStack],redo:[...redoStack],seq:state.seq,
+  pane:!$('figure-pane').hidden?'figure':!$('gallery-pane').hidden?'gallery':!$('data-pane').hidden?'data':'chart',
+  figure:{order:[...figureState.order],included:[...figureState.included],options:currentFigureOptions()},
+  folds:[...document.querySelectorAll('.sidebar-fold')].map(d=>d.open)
+ };
+}
+function rvSave(force=false){
+ if(rvRestoring||(!rvEnabled&&!force))return Promise.resolve(false);
+ clearTimeout(rvSaveTimer);rvSaveTimer=0;
+ let rec;
+ try{rec=rvCapture()}catch(_){rvMsg('保存データを準備できませんでした','Could not prepare saved data');return Promise.resolve(false)}
+ const id=++rvSaveSerial;
+ rvPending=rvPending.catch(()=>{}).then(async()=>{
+  if(!rvEnabled&&!force)return false;
+  try{await rvTransaction('readwrite',store=>store.put(rec,rvKey));if(id===rvSaveSerial)rvMsg('保存済み','Saved locally');return true}
+  catch(_){rvMsg('保存に失敗しました。ブラウザの保存容量を確認してください','Save failed; check browser storage quota');return false}
+ });
+ return rvPending;
+}
+function rvQueue(){
+ if(rvRestoring||!rvEnabled)return;
+ clearTimeout(rvSaveTimer);rvSaveTimer=setTimeout(()=>rvSave(),600);
+}
+function rvRestore(rec){
+ if(!rec||rec.version!==1||typeof rec.current!=='string'||!Array.isArray(rec.books)||rec.current.length>10000000)throw Error('Invalid cache');
+ const snap=JSON.parse(rec.current);
+ if(!Array.isArray(snap.graphs)||snap.graphs.length<1||snap.graphs.length>50)throw Error('Invalid chart data');
+ historyBookRegistry.clear();
+ for(const b of rec.books)if(b&&typeof b.id==='string'&&Array.isArray(b.sheets))historyBookRegistry.set(b.id,b);
+ undoStack=Array.isArray(rec.undo)?rec.undo.filter(x=>typeof x==='string').slice(-90):[];
+ redoStack=Array.isArray(rec.redo)?rec.redo.filter(x=>typeof x==='string').slice(-90):[];
+ state.seq=Math.max(2,Number(rec.seq)||2);
+ restoreHistory(rec.current);
+ const fig=rec.figure||{},opt=fig.options||{};
+ if(Array.isArray(fig.order))figureState.order=fig.order.filter(x=>Number.isInteger(x)&&x>=0&&x<state.graphs.length);
+ if(Array.isArray(fig.included))figureState.included=new Set(fig.included.filter(x=>Number.isInteger(x)&&x>=0&&x<state.graphs.length));
+ for(const [k,id] of [['cols','figure-cols'],['width','figure-width'],['height','figure-height'],['gap','figure-gap'],['padding','figure-padding']])if(Number.isFinite(+opt[k]))$(id).value=String(opt[k]);
+ if(/^#[0-9a-f]{6}$/i.test(opt.background||''))$('figure-background').value=opt.background;
+ if(typeof opt.labels==='boolean')$('figure-labels').checked=opt.labels;
+ if(Array.isArray(rec.folds))document.querySelectorAll('.sidebar-fold').forEach((d,i)=>{if(typeof rec.folds[i]==='boolean')d.open=rec.folds[i]});
+ switchPane(['chart','data','gallery','figure'].includes(rec.pane)?rec.pane:'chart');
+ renderGraphTabs();historyButtons();localizeControls();
+}
+async function rvInit(){
+ try{rvEnabled=localStorage.getItem(rvChoice)!=='0'}catch(_){rvEnabled=true}
+ $('rv-enable').checked=rvEnabled;
+ try{
+  if(rvEnabled){
+   const old=await rvTransaction('readonly',s=>s.get(rvKey));
+   if(old){rvRestore(old);rvMsg('前回の作業を復元しました','Previous workspace restored')}
+   else rvMsg('編集内容を自動保存します','Changes will be saved automatically');
+  }else rvMsg('自動保存はオフです','Auto-save is off');
+ }catch(_){rvMsg('保存データを復元できませんでした','Could not restore saved data')}
+ finally{rvRestoring=false}
+}
+$('rv-enable').addEventListener('change',async e=>{
+ rvEnabled=e.target.checked;
+ try{localStorage.setItem(rvChoice,rvEnabled?'1':'0')}catch(_){}
+ if(rvEnabled){rvMsg('自動保存を開始しました','Auto-save enabled');await rvSave(true)}
+ else{
+  clearTimeout(rvSaveTimer);await rvPending.catch(()=>{});
+  try{await rvTransaction('readwrite',s=>s.delete(rvKey));rvMsg('自動保存をオフにして保存データを削除しました','Auto-save off; saved data cleared')}
+  catch(_){rvMsg('自動保存はオフです。保存データを削除できませんでした','Auto-save off; could not clear saved data')}
+ }
+});
+$('rv-save').addEventListener('click',async()=>{
+ rvEnabled=true;$('rv-enable').checked=true;
+ try{localStorage.setItem(rvChoice,'1')}catch(_){}
+ await rvSave(true);
+});
+$('rv-clear').addEventListener('click',async()=>{
+ if(!confirm(uiIsEnglish()?'Delete local recovery data? Open charts will remain.':'保存した復元データを削除しますか？現在開いているグラフは残ります。'))return;
+ clearTimeout(rvSaveTimer);await rvPending.catch(()=>{});
+ try{await rvTransaction('readwrite',s=>s.delete(rvKey));rvMsg('復元データを削除しました','Saved recovery data deleted')}
+ catch(_){rvMsg('削除できませんでした','Could not delete saved data')}
+});
+const rvOldTrack=trackChange;
+trackChange=function(...args){const out=rvOldTrack(...args);rvQueue();return out};
+const rvOldRestore=restoreHistory;
+restoreHistory=function(...args){const out=rvOldRestore(...args);rvQueue();return out};
+const rvOldFiles=onFiles;
+onFiles=async function(...args){const out=await rvOldFiles(...args);trackChange(null);rvQueue();return out};
+const rvOldSettings=loadSettings;
+loadSettings=async function(...args){const out=await rvOldSettings(...args);trackChange(null);rvQueue();return out};
+for(const type of ['input','change','click'])document.addEventListener(type,e=>{
+ if(e.target.closest?.('#figure-pane,.sidebar-fold>summary'))setTimeout(rvQueue,30);
+},true);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')rvSave()});
+window.addEventListener('pagehide',()=>rvSave());
+$('ui-language').addEventListener('change',()=>{rvStatusEl.textContent=uiIsEnglish()?rvStatusEl.dataset.en||'':rvStatusEl.dataset.ja||''});
+Object.assign(i18nDictionary,{
+ '再読み込み後も復元':'Restore after reload',
+ 'データ・グラフ・Undo履歴をこのブラウザに保存します。外部送信なし。':'Stores data, charts, and Undo history in this browser. No uploads.',
+ '今すぐ保存':'Save now','保存を削除':'Clear saved data'
+});
+rvInit();
 </script>
 </body></html>
