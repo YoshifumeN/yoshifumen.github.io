@@ -36,6 +36,7 @@ h1{font-size:36px;color:darkgreen;margin:18px 0 28px}
 .bar.ended{background:var(--ended)}.bar.open{background:var(--open)}.bar.upcoming{background:var(--upcoming)}
 .bar:hover,.bar:focus-visible{outline:2px solid var(--green);outline-offset:2px}
 .bar.deadline-only{min-width:6px;width:6px}
+.bar.continues::after{content:"→";position:absolute;right:0;top:-4px;color:#003300;font-size:18px;line-height:18px;background:#fff;padding-left:2px}
 .empty{color:#777;font-size:12px;position:absolute;left:12px;top:13px}
 .note{margin-top:18px;font-size:13px;color:#555;line-height:1.7}
 .updated{font-size:12px;color:#777;margin-top:24px}
@@ -83,7 +84,7 @@ h1{font-size:26px}
 </div>
 <p class="note">応募資格や所属機関内締切は公式募集要項で確認してください。</p>
 <p class="updated">募集予告：住友財団・2027年度は<a href="https://sumitomo.or.jp/html/kankyo/kankyou.htm" target="_blank" rel="noopener noreferrer">4月15日募集開始予定</a>（締切未発表）。課題研究テーマ：<a href="https://sumitomo.or.jp/html/kankyo/kankyobosyukadai2027.htm" target="_blank" rel="noopener noreferrer">住友財団・2027年度課題研究</a>／<a href="https://www.af-info.or.jp/research/apply.html" target="_blank" rel="noopener noreferrer">旭硝子財団・2028年度採択分</a>（2027年6月募集情報公開予定）</p>
-<p class="updated">掲載情報：2026年に実施された公募／最終確認：2026年10月26日</p>
+<p class="updated">掲載情報：2026年に実施された公募／最終確認：2026年10月30日</p>
 </main>
 <script>
 'use strict';
@@ -100,6 +101,7 @@ const grants=[
 {name:'ニッセイ財団・環境問題研究助成',fiscalYear:2026,start:'2026-01-13',end:'2026-03-24',url:'https://www.nihonseimei-zaidan.or.jp/kankyo/02.html'},
 {name:'旭硝子財団・研究奨励',fiscalYear:2027,start:'2026-08-01',end:'2026-08-28',url:'https://www.af-info.or.jp/research/apply.html'},
 {name:'旭硝子財団・サステイナブル（提案）',fiscalYear:2027,start:'2026-08-01',end:'2026-10-09',url:'https://www.af-info.or.jp/research/apply.html'},
+{name:'SMBC・シャカカチ RISE PROJECT',fiscalYear:2026,start:'2026-10-30',end:'2027-01-15',url:'https://www.smfg.co.jp/sustainability/sk-academic-research/entry/',note:'2027年1月15日23:59締切。年間最大500万円×原則4年。海外在住の大学研究者も応募可。推薦状と所属機関の承諾書が必要。'},
 {name:'日本水環境学会・クリタ賞国際発表助成',fiscalYear:2026,start:'2026-09-29',end:'2026-11-26',url:'https://jswe.or.jp/awards/kurita/kuritapresen.html',note:'応募資格：過去のクリタ賞受賞者・40歳未満（2026年4月1日時点）・学会会員等。再応募は要確認。'},
 {name:'河川基金・研究者部門',fiscalYear:2027,start:'2026-09-01',end:'2026-09-30',url:'https://www.kasen.or.jp/26160',note:'2026年11月24日への期限変更は学校・団体部門のみ。研究者部門は9月30日締切。'}
 ];
@@ -107,6 +109,7 @@ const now=new Date();
 const asOf=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
 const rows=document.getElementById('rows'),months=document.getElementById('months');
 for(let m=1;m<=12;m++){const el=document.createElement('span');el.textContent=m+'月';months.appendChild(el);}
+const calendarYear=2026;
 function pos(iso){const d=new Date(iso+'T12:00:00');const m=d.getMonth(),day=d.getDate()-1,n=new Date(d.getFullYear(),m+1,0).getDate();return (m+day/n)/12*100;}
 function status(g){
 if(g.end&&g.end<asOf)return '募集終了';
@@ -123,7 +126,13 @@ const track=document.createElement('div');track.className='timeline';
 if(g.end){
 const bar=document.createElement('a');bar.href=g.url;bar.target='_blank';bar.rel='noopener noreferrer';
 bar.className='bar '+({'募集終了':'ended','募集中':'open','募集予定':'upcoming'}[status(g)]||'ended');
-if(g.start){const left=pos(g.start),right=pos(g.end)+100/(12*31);bar.style.left=left+'%';bar.style.width=Math.max(.4,right-left)+'%';}
+if(g.start){
+const left=g.start.slice(0,4)<String(calendarYear)?0:pos(g.start);
+const spansNextYear=g.end.slice(0,4)>String(calendarYear);
+const right=spansNextYear?100:pos(g.end)+100/(12*31);
+bar.style.left=left+'%';bar.style.width=Math.max(.4,right-left)+'%';
+if(spansNextYear)bar.classList.add('continues');
+}
 else{bar.classList.add('deadline-only');bar.style.left=pos(g.end)+'%';}
 bar.title=g.name+'｜'+g.fiscalYear+'年度｜'+(g.start?'募集：'+g.start+'〜'+g.end:'締切：'+g.end+'（開始日未確認）');
 if(g.note)bar.title+='｜'+g.note;
