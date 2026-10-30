@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>Research Visualizer — local HTML v1.7.5</title>
+<title>Research Visualizer — HP Minimal Full v1.7.5</title>
 <style>
 :root { color-scheme:light; --ink:#16273a; --sub:#61718a; --line:#dfe7ef; --navy:#183c64; --blue:#1e6cd1; --bg:#f4f7fb; --surface:#fff; --pale:#eff5fb; --radius:12px; font-family:system-ui,"Yu Gothic UI","Meiryo",sans-serif; }
 *{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--bg);font-size:14px}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}header{background:#16334f;color:white;padding:20px max(22px,calc((100% - 1500px)/2));display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}header h1{font-size:22px;margin:0;font-weight:750;letter-spacing:-.03em}header p{margin:5px 0 0;color:#c1d7ec;font-size:12px}.tag{font-size:12px;border:1px solid #6684a5;border-radius:40px;padding:6px 12px;color:#d6eaf8}.app{display:grid;grid-template-columns:355px minmax(0,1fr);gap:18px;max-width:1500px;margin:18px auto;padding:0 22px 24px;align-items:start}.panel,.view{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 4px 17px rgba(20,50,85,.035)}.panel{padding:0 16px 16px}.step{padding:16px 0;border-bottom:1px solid var(--line)}.step:last-child{border:0}.step h2{font-size:14px;margin:0 0 10px;display:flex;align-items:center;gap:9px}.step h2 b{background:var(--navy);color:white;border-radius:7px;display:inline-flex;justify-content:center;align-items:center;width:23px;height:23px;font-size:12px}.desc,.muted{color:var(--sub);font-size:12px;line-height:1.6;margin:6px 0}.field{margin:8px 0;min-width:0}.field label{display:block;font-size:12px;color:#415670;margin:0 0 5px;font-weight:640}.field input,.field select{border:1px solid #cbd7e4;background:white;border-radius:7px;padding:8px 9px;max-width:100%;width:100%;min-width:0;outline-color:#3d86e1}.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.btn{background:#215f9b;color:white;border:1px solid #215f9b;padding:9px 13px;border-radius:8px;font-weight:650}.btn:hover{filter:brightness(1.07)}.btn.soft{background:#eff5fa;color:#234d78;border-color:#d1dfed}.btn.white{background:white;color:#294d71;border-color:#cfdae7}.btn.danger{background:#fff3f2;border-color:#f2dad6;color:#b24737}.btn.small{padding:5px 9px;font-size:12px}.btn.full{width:100%}.load-btn{display:block;border:1.5px dashed #9bb7d2;border-radius:10px;padding:14px;text-align:center;background:#f6faff;cursor:pointer;font-weight:650;color:#1f5d95}.load-btn:hover{background:#eaf3fe}.load-btn input{display:none}.dataset-list{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.chip{border:1px solid #e0e7ed;background:#f7f9fc;border-radius:16px;padding:4px 8px;font-size:11px;color:#3a5873;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.series-list{display:grid;gap:6px;margin-top:10px}.series-entry{display:flex;align-items:center;gap:7px;background:#f6f9fc;border:1px solid #e4edf5;border-radius:8px;padding:7px}.series-entry .swatch{width:10px;height:10px;border-radius:50%;flex:0 0 10px}.series-entry .series-label{min-width:0;flex:1;word-break:break-word;font-size:12px}.view{padding:19px;min-width:0}.view-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}.view-head h2{margin:0 0 4px;font-size:17px}.view-head p{margin:0;color:var(--sub);font-size:12px}.tools{display:flex;gap:7px;flex-wrap:wrap}.chart-frame{background:white;border:1px solid #ecf0f5;border-radius:9px;position:relative;overflow:hidden;min-height:365px}#plot{display:block;width:100%;height:auto;min-height:365px;aspect-ratio: 1.75/1}#tooltip{position:absolute;pointer-events:none;background:#17283b;color:white;padding:7px 10px;border-radius:6px;font-size:11px;white-space:pre-line;box-shadow:0 4px 12px #3335;z-index:5;max-width:240px;display:none}.status{padding:12px 0 2px;font-size:12px;color:var(--sub);line-height:1.7}.status.err{color:#a73430}.info{margin-top:15px;background:var(--pale);border-radius:9px;padding:12px 14px;color:#375476;font-size:12px;line-height:1.8}.foot{color:#8090a3;font-size:11px;margin-top:10px;line-height:1.7}.foot code{font-size:11px}.number-help{color:#71819a;font-size:11px}.notice{border-radius:8px;background:#f1f8f4;color:#2c6c54;padding:8px 10px;font-size:11px;line-height:1.6;margin-top:10px}.sr-only{position:absolute;left:-10000px}.drop{outline:2px dashed #2d7cca!important;outline-offset:-2px}@media(max-width:960px){.app{grid-template-columns:1fr;padding:0 12px 24px}.panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}.step:nth-child(odd){border-right:1px solid var(--line);padding-right:16px}.step:nth-child(even){padding-left:0}header{padding:18px 15px}}@media(max-width:630px){.panel{display:block}.step:nth-child(odd){border-right:0;padding-right:0}.view{padding:10px}.chart-frame{min-height:240px}#plot{min-height:240px}.view-head h2{font-size:15px}.app{gap:10px;margin:10px auto}}
@@ -177,40 +177,217 @@
 .inspector .bar-pattern-preview{display:flex;gap:5px;align-items:center}
 @media(max-width:600px){.batch-series{padding:9px}.data-label-controls .grid2{grid-template-columns:1fr 1fr}}
 </style>
+<style id="hp-minimal-theme">
+
+/* Minimal academic / HP design — CSS-only skin for original v1.7.5.
+   Original JS, DOM control IDs, data import/export, chart calculations remain unchanged. */
+:root {
+  color-scheme:light;
+  --ink:#252a25;--sub:#626c62;--line:#dbdfd8;--navy:#003300;--blue:darkgreen;
+  --bg:#ffffff;--surface:#ffffff;--pale:#f8faf7;--radius:2px;
+  font-family:Arial,"Yu Gothic UI",Meiryo,sans-serif
+}
+*{box-sizing:border-box}
+html{background:#fff}
+body{font-family:Arial,"Yu Gothic UI",Meiryo,sans-serif;background:#fff;color:#242824;font-size:14px;line-height:1.55}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{transition:background-color .12s ease,border-color .12s ease}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #397a40;outline-offset:2px}
+.site-nav{position:sticky;top:0;z-index:1050;margin:0 auto;padding:15px max(20px,calc((100vw - 1450px)/2));display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;background:#fff;border-bottom:1px solid #e6e8e2}
+.site-nav a{font-size:14px;white-space:nowrap;text-decoration:none;color:darkgreen}
+.site-nav a:hover{text-decoration:underline}
+header{background:#fff;color:#242824;box-shadow:none;border:none;padding:29px max(22px,calc((100% - 1450px)/2)) 15px;align-items:flex-end;gap:12px}
+header h1{font-size:37px;font-weight:700;letter-spacing:-.02em;line-height:1.18;color:darkgreen}
+header h1 span{color:#657065!important;font-weight:400!important;font-size:12px!important;letter-spacing:0}
+header p{color:#646d64}
+header .tag{background:transparent;border:0;padding:0;color:#6c756b;border-radius:0;font-size:11px;letter-spacing:.025em}
+.lang-picker label{color:#626a62;font-weight:400}
+.lang-picker select{border-radius:2px;border:1px solid #cdd4ca;color:#234323;background:#fff;padding:6px 9px;min-height:33px}
+.app{grid-template-columns:320px minmax(0,1fr);gap:31px;max-width:1500px;margin:7px auto 35px;padding:0 24px 28px}
+.panel,.view{background:#fff;border:0;border-radius:0;box-shadow:none;min-width:0}
+.panel{border-top:2px solid darkgreen;border-bottom:1px solid #e2e5df;padding:0 12px 12px 0}
+.view{border-top:2px solid darkgreen;padding:17px 0 14px}
+.step{border-bottom:1px solid #e1e4dc;padding:16px 0 17px}
+.step h2{font-size:15px;color:darkgreen;margin:0 0 12px;font-weight:700;gap:7px}
+.step h2 b{border-radius:0;background:transparent;color:darkgreen;border-right:1px solid #c5d4c5;font-weight:700;width:auto;height:auto;padding:0 8px 0 0;font-size:14px}
+.desc,.muted,.foot,.number-help{color:#687168}
+.field{margin:8px 0 10px}
+.field label{font-size:12px;color:#485b49;font-weight:500}
+.field input,.field select,.inspector .field select,.inspector .field input{border:1px solid #c7d0c5!important;border-radius:2px!important;background:#fff;color:#242824;padding:7px 9px;outline-color:#3e8347}
+.field input[type=color]{padding:3px;height:32px}
+.btn{background:darkgreen;border:1px solid darkgreen;color:#fff;border-radius:2px;font-weight:500;box-shadow:none;padding:9px 12px}
+.btn:hover{filter:none;background:#075607;color:white}
+.btn.soft,.btn.white{background:#fff;border:1px solid #b8c5b7;color:darkgreen}
+.btn.soft:hover,.btn.white:hover{background:#f6f9f4;border-color:darkgreen;color:darkgreen}
+.btn.danger{background:#fff;border-color:#d8b8b5;color:#983a32}
+.btn.small{padding:5px 9px}
+.load-btn{padding:12px 10px;border:1px solid #aebdab;background:#fff;color:darkgreen;border-radius:2px;font-weight:500;text-align:center}
+.load-btn:hover{background:#f6f9f4;border-color:darkgreen}
+.dataset-list{gap:5px}
+.dataset-chip,.chip{background:#fff;border:1px solid #dde3da;border-radius:2px;color:#465945}
+.dataset-chip button{border-radius:2px}
+.series-entry{background:#fff;border:0;border-bottom:1px solid #e6e9e3;border-radius:0;padding:8px 0;gap:8px}
+.series-entry .series-label{color:#3b463c}
+.series-entry input.series-name{color:#283c2a}
+.series-color-control summary{border-radius:2px;border-color:#b7c8b6}
+.series-color-control .color-popup{border-radius:2px;border-color:#cbd9c7;box-shadow:0 6px 20px #14281420}
+.style-details,.style-template-controls,.legend-box-controls,.legend-layout-controls,.legend-quick-controls,
+.batch-series,.data-label-controls,.bulk-marker-border,.error-chart-controls,.x-filter,.xcat-controls,
+.figure-controls,.gallery-style-editor{background:#fff;border:1px solid #dde3da;border-radius:2px;color:#304632}
+.style-details summary,.style-template-controls strong,.legend-quick-controls>strong,
+.batch-series>strong,.data-label-controls>strong,.bulk-marker-border strong,.error-chart-controls strong,
+.x-filter-head strong{color:darkgreen}
+.style-switches label,.reference-list label{color:#455746}
+.choice-group button,.swatch-option{border:1px solid #cbd4c8;background:#fff;color:darkgreen;border-radius:2px}
+.choice-group button:hover,.swatch-option:hover{background:#f4f8f2}
+.choice-group button.active,.swatch-option.active{background:darkgreen;border-color:darkgreen;color:#fff;outline:none}
+.workspace-tabs{border-bottom:1px solid #dadfd6}
+.workspace-tabs .tab{color:#5f6b60;font-weight:500;border-bottom:2px solid transparent;border-radius:0;padding:10px 12px}
+.workspace-tabs .tab.active{color:darkgreen;border-bottom-color:darkgreen}
+.view-head h2{font-size:19px;color:darkgreen}
+.view-head p{color:#687368}
+.tools{gap:7px}
+.chart-frame{border:1px solid #e3e7e0;border-radius:0;background:#fff;min-height:360px;overflow:visible}
+.chart-frame svg{border-radius:0!important}
+#plot{margin-inline:auto}
+#tooltip{background:#1d3922;border-radius:2px;box-shadow:0 3px 9px #18301933}
+.status{color:#5e6d5f}
+.status.err{color:#a52d27}
+.info,.notice{background:#f7faf6;border:1px solid #e3e9e0;border-radius:2px;color:#3d5940}
+.graph-toolbar{border-bottom:1px solid #e2e6e0;gap:8px}
+.graph-tabs{gap:11px}
+.graph-tabs button{background:#fff;color:#566456;border:0;border-bottom:2px solid transparent;border-radius:0;font-weight:500;padding:8px 6px}
+.graph-tabs button.active{background:#fff;color:darkgreen;border-color:darkgreen}
+.graph-tabs button:hover{background:#f7faf6}
+.graph-actions .btn{padding:7px 10px}
+.inspector{border:1px solid #b9cbb8;background:#fff;border-radius:2px;box-shadow:0 5px 22px #19331a30;color:#2a3d2d}
+.inspector-head{color:darkgreen;background:#f7faf6;border-radius:0;box-shadow:none}
+.inspector-head .inspector-close{background:#eff3ee;color:darkgreen;border-radius:0}
+.inspector-divider{color:darkgreen;border-top:1px solid #e0e5dd}
+.sheet-tabs button{border-radius:2px;background:#fff;color:#536254;border-color:#d2dad0;font-weight:500}
+.sheet-tabs button.active{background:darkgreen;border-color:darkgreen;color:#fff}
+.table-viewport{border:1px solid #dee4db;border-radius:0}
+.sheet-table th{background:#f4f7f2;color:#335237;border-color:#e5eae2}
+.sheet-table td{border-color:#e9ede7}
+.sheet-table tr:nth-child(even) td:not(.rownum){background:#fbfcfa}
+.sheet-table td.rownum{background:#f7f9f5;color:#718071}
+.data-toolbar label,.data-reorder-tools{color:#536454}
+.data-toolbar input,.data-move-row input{border:1px solid #cbd8c9;border-radius:2px;background:#fff}
+.gallery-card{border:1px solid #dfe4db;border-radius:2px;background:#fff}
+.gallery-thumb{border:1px solid #e1e7df;border-radius:0;background:#fff}
+.gallery-grid{gap:16px}
+.gallery-editor-fields input{border-radius:2px;border:1px solid #cbd6c7}
+.figure-preview-wrap{border:1px solid #dce5dc;border-radius:0;background:#f9faf8}
+.figure-preview svg{border:1px solid #dbe2da}
+.reference-row{border-radius:2px;border-color:#dfe8dd;background:#fff}
+.legend-quick-controls,.legend-layout-controls{box-shadow:none}
+#plot [data-editor]:hover{filter:brightness(.86)}
+@media(min-width:961px){
+  .panel{top:15px;max-height:calc(100vh - 30px)}
+  .steps-scroll{scrollbar-gutter:stable}
+  .save-panel{border-top:1px solid #e4e9e2;box-shadow:none;background:#fff}
+}
+@media(max-width:960px){
+  header{padding:20px 16px 12px}
+  .app{grid-template-columns:1fr;gap:18px;margin:0 auto;padding:0 16px 24px}
+  .panel{padding:0 5px 8px}
+  .step:nth-child(odd){border-right:1px solid #e2e8dd}
+  .site-nav{padding:12px 16px}
+  .view{padding:14px 0}
+}
+@media(max-width:630px){
+  header h1{font-size:28px}
+  header{gap:9px}
+  .site-nav{gap:9px 14px}
+  .site-nav a{font-size:12px}
+  .app{padding:0 12px 24px}
+  .step:nth-child(odd){border-right:0}
+  .view-head h2{font-size:17px}
+  .chart-frame{min-height:230px}
+  .lang-picker{margin-left:0}
+}
+
+
+/* Compact workspace controls 2026-10-30; chart logic unchanged. */
+.workspace-command-row{display:flex;align-items:center;gap:5px 10px;flex-wrap:wrap;margin:0 0 7px;border-bottom:1px solid #dce4da;min-width:0}
+.workspace-command-row .workspace-tabs{display:flex;flex:0 1 auto;gap:3px;flex-wrap:wrap;white-space:nowrap;min-width:0;border:0;margin:0}
+.workspace-command-row .workspace-tabs .tab{padding:5px 6px;font-size:12px}
+.workspace-command-row .chart-quick-tools{display:flex;align-items:center;justify-content:flex-end;flex:1 1 auto;gap:4px;margin:0 0 2px auto;min-width:0;flex-wrap:wrap}
+.chart-quick-tools .btn{font-size:11px;line-height:1.25;padding:5px 7px;white-space:nowrap}
+.chart-quick-tools .chart-label-shortcut{font-size:11px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.chart-quick-tools .chart-label-shortcut select{min-width:55px;width:auto;padding:3px 4px;min-height:27px;border-radius:2px;font-size:11px}
+.chart-view-head{display:none}
+.save-panel{padding:0!important}
+.save-details{min-width:0}
+.save-details>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;padding:8px 2px;min-height:36px}
+.save-details>summary::-webkit-details-marker{display:none}
+.save-details>summary h2{display:flex;align-items:center;gap:7px;margin:0;font-size:13px}
+.save-details>summary::after{content:"＋";color:darkgreen;font-size:15px;font-weight:700}
+.save-details[open]>summary::after{content:"−"}
+.save-details[open] .save-content{max-height:min(56vh,440px);overflow-y:auto;overscroll-behavior:contain;padding:6px 5px 10px 1px;border-top:1px solid #e1e8df}
+.legacy-single-export{display:none!important}
+.save-content .style-template-controls{margin-top:0}
+@media(max-width:1150px){.workspace-command-row .chart-quick-tools{justify-content:flex-start}}
+@media(max-width:630px){.workspace-command-row{gap:4px}.workspace-command-row .workspace-tabs .tab{padding:5px 4px;font-size:11px}.chart-quick-tools .btn{padding:5px 5px}}
+
+/* Standalone editing workspace: Save next to the language selector. */
+header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-items:center}
+.header-controls{display:flex;align-items:center;justify-content:flex-end;gap:10px 16px;flex-wrap:wrap;min-width:0}
+.header-save{position:relative;flex:none;min-width:0;border:0!important;padding:0!important;margin:0!important;box-shadow:none!important;background:transparent!important;z-index:60}
+.header-save .save-details>summary{border:1px solid #b8cdb7;border-radius:2px;padding:5px 9px;min-height:33px;background:#fff;gap:10px}
+.header-save .save-details>summary:hover{background:#f1f6f0;border-color:#95b395}
+.header-save .save-details>summary h2{font-size:12px;white-space:nowrap;margin:0;color:darkgreen}
+.header-save .save-details>summary h2 b{font-size:12px}
+.header-save .save-details>summary::after{content:"▾";font-size:12px}
+.header-save .save-details[open]>summary::after{content:"▴"}
+.header-save .save-details[open] .save-content{position:absolute;right:0;top:calc(100% + 6px);width:min(360px,calc(100vw - 24px));max-height:min(72vh,620px);overflow-y:auto;overscroll-behavior:contain;padding:13px 14px;border:1px solid #d5e0d2;background:#fff;box-shadow:0 10px 28px rgba(19,45,20,.15);z-index:1000}
+.header-save .save-content .style-template-controls{margin-top:0}
+@media(max-width:650px){header{align-items:flex-start}.header-controls{justify-content:flex-start;gap:7px 10px}.header-controls .tag{flex-basis:100%}.header-save .save-details[open] .save-content{right:auto;left:0}}
+</style>
 </head>
 <body>
-<header><div><h1>Research Visualizer <span style="font-size:12px;font-weight:500;color:#b8cee1">v1.7.5</span></h1></div><div class="tag">LOCAL ONLY · サーバー送信なし</div><div class="lang-picker"><label for="ui-language">言語 / Language</label><select id="ui-language" aria-label="UI language"><option value="ja">日本語</option><option value="en">English</option></select></div></header>
+<header><div><h1>Research Visualizer <span style="font-size:12px;font-weight:500;color:#b8cee1">v1.7.5</span></h1></div><div class="header-controls"><div class="tag">LOCAL ONLY · オフライン動作</div><section class="step save-panel header-save"><details class="save-details"><summary><h2><b>5</b> 保存・再利用</h2></summary><div class="save-content"><div class="legacy-single-export" hidden><div class="grid2"><button id="exportsvg" class="btn soft">SVGで保存</button><button id="exportpng" class="btn soft">PNGで保存</button></div></div>
+<div class="style-template-controls">
+  <strong>グラフの体裁テンプレート</strong>
+  <p class="desc">色・軸・凡例などの体裁を保存・適用します。</p>
+  <div class="grid2"><button id="copy-style" class="btn soft">体裁をコピー</button><button id="paste-style" class="btn soft" disabled>体裁を貼り付け</button></div>
+  <div class="grid2" style="margin-top:7px"><button id="savestyle" class="btn white">体裁を保存</button><label class="btn white" style="text-align:center;cursor:pointer">体裁を読み込んで適用<input id="loadstyle" type="file" accept=".json,application/json" hidden></label></div>
+  <p id="style-copy-status" class="desc" aria-live="polite">まだ体裁をコピーしていません。</p>
+</div>
+<div class="grid2" style="margin-top:9px"><button id="savesettings" class="btn white">設定を保存</button><label class="btn white" style="text-align:center;cursor:pointer">設定を読み込む<input id="loadsettings" type="file" accept=".json,application/json" hidden></label></div>
+<p class="desc">設定：作業全体／体裁：書式のみ。Excelの数値は保存しません。</p>
+</div></details></section><div class="lang-picker"><label for="ui-language">言語 / Language</label><select id="ui-language" aria-label="UI language"><option value="ja">日本語</option><option value="en">English</option></select></div></div></header>
 <main class="app">
 <aside class="panel" aria-label="作図設定"><div class="steps-scroll" id="steps-scroll">
-<section class="step"><h2><b>1</b> データを開く</h2>
+<section class="step"><h2><b>1</b> ファイルを開く</h2>
 <label class="load-btn">＋ Excel / CSV を選ぶ<input id="file" type="file" multiple accept=".xlsx,.csv,.tsv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></label>
-<p class="desc">Excel / CSV / TSV を読み込み（ドラッグ＆ドロップ可）。</p>
+<p class="desc">Excel・CSV・TSV対応。ドラッグ＆ドロップ可。</p>
 <div class="dataset-list" id="dataset-list"></div>
 </section>
-<section class="step"><h2><b>2</b> 系列を追加する</h2>
+<section class="step"><h2><b>2</b> データを追加する</h2>
 <div class="field"><label for="source">ファイル / シート</label><select id="source"></select></div>
 <div class="grid2"><div class="field"><label for="xcol">X列</label><select id="xcol"></select></div><div class="field"><label for="ycol">Y列</label><select id="ycol"></select></div></div>
-<div class="field"><label for="slabel">凡例の名前</label><input id="slabel" type="text" placeholder="例：物質A / X=0.25"></div>
-<button id="add" class="btn full">＋ この系列を重ねる</button>
-<div class="batch-series"><strong>系列をまとめて追加</strong><div class="field"><label for="bulk-y-columns">Y列を複数選択（Ctrl / Shiftで複数選択）</label><select id="bulk-y-columns" multiple size="5"></select></div><button id="bulk-add-series" class="btn soft full" type="button">＋ 選択した列を一括追加</button></div>
+<input id="slabel" type="hidden" value="">
+<button id="add" class="btn full">＋ データを追加する</button>
+<div class="batch-series"><strong id="bulk-series-title">まとめて追加（Ctrl / Shiftで複数選択）</strong><div class="field"><select id="bulk-y-columns" multiple size="5" aria-labelledby="bulk-series-title"></select></div><button id="bulk-add-series" class="btn soft full" type="button">＋ 選択した列を一括追加</button></div>
 <div id="series-list" class="series-list"></div>
 <div class="bulk-marker-border">
- <strong>全プロットの枠線を一括変更</strong>
- <p class="desc">点や棒の枠線だけをまとめて変更します。塗りつぶし色・線の色には影響しません。</p>
- <div class="grid2"><div class="field"><label for="bulk-border-color">枠線の色</label><input type="color" id="bulk-border-color" value="#333333"></div><div class="field"><label for="bulk-border-alpha">透明度 (%)</label><input type="number" id="bulk-border-alpha" value="0" min="0" max="100" step="1"></div></div>
+ <strong>枠線を一括変更</strong>
+ 
+ <div class="grid2"><div class="field"><label for="bulk-border-color">色</label><input type="color" id="bulk-border-color" value="#333333"></div><div class="field"><label for="bulk-border-alpha">透明度 (%)</label><input type="number" id="bulk-border-alpha" value="0" min="0" max="100" step="1"></div></div>
  <div class="grid2"><div class="field"><label for="bulk-border-width">太さ (px)</label><input type="number" id="bulk-border-width" value="1.5" min="0" max="12" step="0.25"></div><div class="field"><label for="bulk-border-scope">変更する範囲</label><select id="bulk-border-scope"><option value="chart">このグラフの全系列</option><option value="all">全グラフの全系列</option></select></div></div>
- <button class="btn small soft full" id="bulk-border-apply" type="button">枠線を一括適用</button>
+ <button class="btn small soft full" id="bulk-border-apply" type="button">適用</button>
 </div>
 <div class="batch-series"><strong>系列の色を一括変更</strong>
  <div class="field"><label for="bulk-palette">配色</label><select id="bulk-palette"><option value="rainbow">虹色（色相順）</option><option value="saturation">青系（彩度変化）</option><option value="gradient">青 → 赤（連続変化）</option><option value="viridis">Viridis風（連続色）</option><option value="gray">グレースケール</option><option value="categorical">標準配色</option></select></div>
  <div class="field"><label for="bulk-palette-scope">変更する範囲</label><select id="bulk-palette-scope"><option value="chart">このグラフの全系列</option><option value="all">全グラフの全系列</option></select></div>
- <button id="bulk-palette-apply" type="button" class="btn soft full">配色を一括適用</button>
+ <button id="bulk-palette-apply" type="button" class="btn soft full">適用</button>
 </div></section>
 <section class="step"><h2><b>3</b> グラフの体裁</h2>
 <div class="field"><label for="title">タイトル（空白でもOK）</label><input id="title" placeholder="Breakthrough curves"></div>
 <div class="grid2"><div class="field"><label for="xlabel">X軸ラベル</label><input id="xlabel" value="Bed volumes (BV)"></div><div class="field"><label for="ylabel">Y軸ラベル</label><input id="ylabel" value="C / C₀"></div></div>
-<div class="grid2"><div class="field"><label for="plotmode">表示形式</label><select id="plotmode"><option value="line-points">線＋点</option><option value="points">散布図（点のみ）</option><option value="line">線のみ</option><option value="step">階段線</option><option value="area">面グラフ</option><option value="bar-grouped">集合棒グラフ</option><option value="bar-stacked">積み上げ棒グラフ</option><option value="bar-percent">100%積み上げ棒グラフ</option><option value="histogram">ヒストグラム</option><option value="boxplot">箱ひげ図</option></select></div><div class="field"><label for="markersize">新規系列の点の半径 (px)</label><input id="markersize" type="number" step="0.5" min="0.5" max="24" value="3.5"></div></div><div class="data-label-controls"><strong>データラベル</strong>
- <p class="data-label-hint">棒の上や各プロットに値を表示できます。積み上げ棒では「合計値」を推奨します。</p><div class="grid2"><div class="field"><label for="datalabelmode">表示</label><select id="datalabelmode"><option value="none">表示しない</option><option value="value">各値を表示</option><option value="total">各項目の合計を表示</option></select></div><div class="field"><label for="datalabeldecimals">小数桁</label><input id="datalabeldecimals" type="number" min="0" max="8" step="1" value="1"></div></div>
+<div class="grid2"><div class="field"><label for="plotmode">表示形式</label><select id="plotmode"><option value="line-points">線＋点</option><option value="points">散布図（点のみ）</option><option value="line">線のみ</option><option value="step">階段線</option><option value="area">面グラフ</option><option value="bar-grouped">集合棒グラフ</option><option value="bar-stacked">積み上げ棒グラフ</option><option value="bar-percent">100%積み上げ棒グラフ</option><option value="histogram">ヒストグラム</option><option value="boxplot">箱ひげ図</option></select></div><div class="field"><label for="markersize">新規系列の点の半径 (px)</label><input id="markersize" type="number" step="0.5" min="0.5" max="24" value="3.5"></div></div><div class="data-label-controls"><strong>データラベル（プロットの数値を表示）</strong>
+ <div class="grid2"><div class="field"><label for="datalabelmode">表示</label><select id="datalabelmode"><option value="none">表示しない</option><option value="value">各値を表示</option><option value="total">各項目の合計を表示</option></select></div><div class="field"><label for="datalabeldecimals">小数桁</label><input id="datalabeldecimals" type="number" min="0" max="8" step="1" value="1"></div></div>
  <div class="grid2"><div class="field"><label for="datalabelsize">文字サイズ (pt)</label><input id="datalabelsize" type="number" min="6" max="24" step="0.5" value="9"></div><div class="field"><label for="datalabelcolor">文字色</label><input id="datalabelcolor" type="color" value="#243448"></div></div>
 </div>
 <div class="legend-quick-controls" id="legend-quick-controls"><strong id="legend-quick-title">凡例の配置・段数</strong>
@@ -222,33 +399,33 @@
   <div class="grid2"><div class="field"><label for="legenddx">左右の移動 (px、右が＋)</label><input id="legenddx" type="number" min="-1500" max="1500" value="0" step="1"></div><div class="field"><label for="legenddy">上下の移動 (px、下が＋)</label><input id="legenddy" type="number" min="-1500" max="1500" value="0" step="1"></div></div>
 </div>
 </div>
-<div class="field" id="bar-width-field" hidden><label for="barwidth">棒の幅（間隔に対する割合 %）</label><input id="barwidth" type="number" min="10" max="98" step="1" value="74"></div><p class="desc" id="bar-mode-hint" hidden>棒グラフはX列の値で棒をまとめます。文字列のカテゴリにも対応します。複数系列で同じX値を使用してください。同一系列内でXが重複した場合は値を合計します。100%積み上げでは負の値を使用できません。</p>
-<div class="error-chart-controls" id="error-chart-controls"><strong>誤差棒・信頼区間</strong><p class="desc">各系列の「誤差」からSD・SE・95%信頼区間を設定します。読み込む誤差列は上下の幅で、反復列からの95% CIはt分布に基づきます。積み上げ棒・ヒストグラム・箱ひげ図では誤差棒を表示しません。</p><div class="grid2"><div class="field"><label for="errorwidth">誤差線の太さ (px)</label><input id="errorwidth" type="number" min="0.3" max="12" value="1.5" step="0.25"></div><div class="field"><label for="errorcap">端の横棒の半幅 (px)</label><input id="errorcap" type="number" min="0" max="30" value="6" step="1"></div></div><label class="error-toggle"><input id="errorband" type="checkbox"> 線・散布図で信頼区間を帯状に表示</label><div class="field"><label for="errorbandopacity">帯の不透明度 (%)</label><input id="errorbandopacity" type="number" min="0" max="100" step="1" value="17"></div><div class="field" id="histbin-field" hidden><label for="histbins">ヒストグラムのビン数</label><input id="histbins" type="number" min="3" max="70" step="1" value="12"></div></div>
+<div class="field" id="bar-width-field" hidden><label for="barwidth">棒の幅（間隔に対する割合 %）</label><input id="barwidth" type="number" min="10" max="98" step="1" value="74"></div><p class="desc" id="bar-mode-hint" hidden>X列で分類。重複したX値は合算します。100%積み上げは負の値に非対応。</p>
+<div class="error-chart-controls" id="error-chart-controls"><strong>誤差棒・信頼区間</strong><p class="desc">SD・SE・95% CIを設定。95% CIはt分布に基づきます。積み上げ棒・ヒストグラム・箱ひげ図は非対応。</p><div class="grid2"><div class="field"><label for="errorwidth">誤差線の太さ (px)</label><input id="errorwidth" type="number" min="0.3" max="12" value="1.5" step="0.25"></div><div class="field"><label for="errorcap">端の横棒の半幅 (px)</label><input id="errorcap" type="number" min="0" max="30" value="6" step="1"></div></div><label class="error-toggle"><input id="errorband" type="checkbox"> 線・散布図で信頼区間を帯状に表示</label><div class="field"><label for="errorbandopacity">帯の不透明度 (%)</label><input id="errorbandopacity" type="number" min="0" max="100" step="1" value="17"></div><div class="field" id="histbin-field" hidden><label for="histbins">ヒストグラムのビン数</label><input id="histbins" type="number" min="3" max="70" step="1" value="12"></div></div>
 <div class="field"><label for="xmode">X軸の値の扱い</label><select id="xmode"><option value="auto">自動判定（文字を検出したら名称軸）</option><option value="numeric">数値軸（従来どおり）</option><option value="category">名称軸（等間隔）</option></select></div>
 <div class="x-filter" id="x-filter">
 <div id="xcat-controls" class="xcat-controls" hidden>
  <strong style="font-size:12px;color:#26496a">名称ラベルの角度と揃え</strong>
- <p class="desc">名前は下の一覧、またはグラフ上のラベルをクリックして直接編集できます。元のExcel値は変更しません。</p>
+ <p class="desc">項目名は一覧やグラフ上で編集できます。</p>
  <div class="grid2"><div class="field"><label for="xtickangle">共通の角度（度）</label><input type="number" id="xtickangle" value="0" min="-90" max="90" step="1"></div>
  <div class="field"><label for="xtickalign">共通の文字揃え</label><select id="xtickalign"><option value="center">中央揃え</option><option value="right">右揃え</option><option value="left">左揃え</option></select></div></div>
  <button id="xcat-resetlabels" type="button" class="btn small white">名称の変更をすべてリセット</button>
-</div><div class="x-filter-head"><strong>横軸の項目を表示 / 非表示</strong><span id="x-filter-count" class="muted"></span></div><p class="desc">同じX値のデータをすべての系列でまとめて切り替えます。元のExcelには変更を加えません。</p><input id="x-filter-search" class="x-filter-search" type="search" placeholder="項目名で絞り込み"><div class="x-filter-actions"><button type="button" class="btn white" id="x-filter-all">すべて表示</button><button type="button" class="btn white" id="x-filter-none">すべて非表示</button><button type="button" class="btn white" id="x-filter-visible">検索結果を表示</button></div><div id="x-filter-list" class="x-filter-list"></div><p id="x-filter-hint" class="desc"></p></div>
+</div><div class="x-filter-head"><strong>横軸の項目を表示 / 非表示</strong><span id="x-filter-count" class="muted"></span></div><p class="desc">同じX値を全系列で表示／非表示にします。</p><input id="x-filter-search" class="x-filter-search" type="search" placeholder="項目名で絞り込み"><div class="x-filter-actions"><button type="button" class="btn white" id="x-filter-all">すべて表示</button><button type="button" class="btn white" id="x-filter-none">すべて非表示</button><button type="button" class="btn white" id="x-filter-visible">検索結果を表示</button></div><div id="x-filter-list" class="x-filter-list"></div><p id="x-filter-hint" class="desc"></p></div>
 <div class="field"><label for="linewidth">新規系列の線の太さ (px)</label><input id="linewidth" type="number" step="0.25" min="0.25" max="16" value="2.35"></div>
 <div class="grid2"><div class="field"><label for="xscale">X軸</label><select id="xscale"><option value="linear">線形</option><option value="log">対数</option></select></div><div class="field"><label for="yscale">Y軸</label><select id="yscale"><option value="linear">線形</option><option value="log">対数</option></select></div></div>
 <div class="grid2"><div class="field"><label for="xmin">X最小値</label><input id="xmin" type="number" step="any" placeholder="自動"></div><div class="field"><label for="xmax">X最大値</label><input id="xmax" type="number" step="any" placeholder="自動"></div></div>
 <div class="grid2"><div class="field"><label for="ymin">Y最小値</label><input id="ymin" type="number" step="any" placeholder="自動"></div><div class="field"><label for="ymax">Y最大値</label><input id="ymax" type="number" step="any" placeholder="自動"></div></div>
 <div class="grid2"><div class="field"><label for="xtickstep">X目盛間隔（自動は空欄）</label><input id="xtickstep" type="number" min="0" step="any" placeholder="自動"></div><div class="field"><label for="ytickstep">Y目盛間隔（自動は空欄）</label><input id="ytickstep" type="number" min="0" step="any" placeholder="自動"></div></div>
-<p class="desc">対数軸の目盛間隔は10の何乗ごとかを指定（例：1＝毎10倍、2＝毎100倍）。線形軸では数値の間隔です。</p>
+<p class="desc">対数軸：1＝10倍、2＝100倍。線形軸：数値間隔。</p>
 <div class="grid2"><div class="field"><label for="xformat">X目盛の表記</label><select id="xformat"><option value="auto">自動</option><option value="fixed">小数</option><option value="scientific">指数（E表記）</option><option value="power">指数（a × 10ⁿ）</option></select></div><div class="field"><label for="yformat">Y目盛の表記</label><select id="yformat"><option value="auto">自動</option><option value="fixed">小数</option><option value="scientific">指数（E表記）</option><option value="power">指数（a × 10ⁿ）</option></select></div></div>
 <div class="grid2"><div class="field"><label for="xdecimals">X目盛の小数桁</label><input id="xdecimals" type="number" min="0" max="12" step="1" value="2"></div><div class="field"><label for="ydecimals">Y目盛の小数桁</label><input id="ydecimals" type="number" min="0" max="12" step="1" value="2"></div></div>
 <button id="resetaxes" class="btn soft full">軸範囲・目盛間隔を自動に戻す</button><details class="style-details" id="ticks-details"><summary>目盛・グリッド線</summary>
-<p class="desc">グラフ上の目盛やグリッド線をクリックして編集することもできます。</p>
+
 <div class="grid2"><div class="field"><label><input id="xtickson" type="checkbox" checked> 横軸の目盛線</label></div><div class="field"><label><input id="ytickson" type="checkbox" checked> 縦軸の目盛線</label></div></div>
 <div class="grid2"><div class="field"><label><input id="xgridon" type="checkbox" checked> 縦グリッド線</label></div><div class="field"><label><input id="ygridon" type="checkbox" checked> 横グリッド線</label></div></div>
-<p class="desc">色・太さ・線形状・目盛線の長さや方向は、軸またはグリッド線をクリックして変更できます。</p>
+
 </details>
 <details class="style-details"><summary>色・文字・グラフ寸法（詳細設定）</summary>
-<p class="desc">グラフ内の軸、凡例、線や点をクリックしても編集できます。</p>
+
 <div class="grid2"><div class="field"><label for="plotwidth">プロット横幅 (px)</label><input id="plotwidth" type="number" min="240" max="1600" step="10" value="800"></div><div class="field"><label for="plotheight">プロット縦幅 (px)</label><input id="plotheight" type="number" min="180" max="1200" step="10" value="400"></div></div>
 <div class="grid2"><div class="field"><label for="xaxiscolor">横軸の色</label><input id="xaxiscolor" type="color" value="#50657c"></div><div class="field"><label for="yaxiscolor">縦軸の色</label><input id="yaxiscolor" type="color" value="#50657c"></div></div>
 <div class="grid2"><div class="field"><label for="plotfill">プロットエリアの色</label><input id="plotfill" type="color" value="#ffffff"></div><div class="field"><label for="framecolor">枠線の色</label><input id="framecolor" type="color" value="#8799ad"></div></div>
@@ -272,36 +449,26 @@
 <label><input id="ytickbold" type="checkbox"> 縦軸目盛 太字</label>
 <label><input id="legendbold" type="checkbox"> 凡例 太字</label>
 </div>
-<p class="desc">上付き・下付きは <code>10^{3}</code> / <code>C_{0}</code> と入力します。クリック編集窓には挿入ボタンもあります。</p><p class="desc">フォントサイズはOfficeと同じpt指定です（画面では 1 pt = 96/72 px として描画）。</p>
+<p class="desc">上付き：<code>10^{3}</code>、下付き：<code>C_{0}</code></p>
 </details>
 </section>
 <section class="step"><h2><b>4</b> 基準線（リファレンスライン）</h2>
-<p class="desc">Y = 1 の水平線や X = 任意値 の垂直線を重ねられます。描いた線をクリックすると編集できます。</p>
+
 <div class="grid2"><button id="add-hline" class="btn soft">＋ 水平線 (Y=1)</button><button id="add-vline" class="btn soft">＋ 垂直線</button></div>
 <div class="reference-list" id="reference-list"></div>
 </section>
-</div><section class="step save-panel"><h2><b>5</b> 保存・再利用</h2><div class="grid2"><button id="exportsvg" class="btn soft">SVGで保存</button><button id="exportpng" class="btn soft">PNGで保存</button></div>
-<div class="style-template-controls">
-  <strong>グラフの体裁テンプレート</strong>
-  <p class="desc">色・形・太さ・軸・凡例・基準線などを保存して別のグラフに適用。データ・凡例名・タイトルと軸ラベルの文章は変更しません。</p>
-  <div class="grid2"><button id="copy-style" class="btn soft">体裁をコピー</button><button id="paste-style" class="btn soft" disabled>体裁を貼り付け</button></div>
-  <div class="grid2" style="margin-top:7px"><button id="savestyle" class="btn white">体裁を保存</button><label class="btn white" style="text-align:center;cursor:pointer">体裁を読み込んで適用<input id="loadstyle" type="file" accept=".json,application/json" hidden></label></div>
-  <p id="style-copy-status" class="desc" aria-live="polite">まだ体裁をコピーしていません。</p>
 </div>
-<div class="grid2" style="margin-top:9px"><button id="savesettings" class="btn white">設定を保存</button><label class="btn white" style="text-align:center;cursor:pointer">設定を読み込む<input id="loadsettings" type="file" accept=".json,application/json" hidden></label></div>
-<p class="desc">「設定」はデータとの対応も含む作業全体。「体裁」は別グラフへ書式だけを移します。Excelの数値自体はどちらにも含めません。</p>
-</section>
 </aside>
 <section class="view">
 <div class="graph-toolbar"><div id="graph-tabs" class="graph-tabs" role="tablist" aria-label="グラフを選択"></div><div class="graph-actions"><button class="btn small soft" id="add-graph">＋ グラフ追加</button><button class="btn small white" id="clone-graph">複製</button><button class="btn small danger" id="remove-graph">削除</button></div></div>
-<nav class="workspace-tabs" aria-label="表示切り替え"><button id="tab-chart" class="tab active" aria-selected="true">グラフ1</button><button id="tab-data" class="tab" aria-selected="false">データ1</button><button id="tab-gallery" class="tab" aria-selected="false">一覧</button><button id="tab-figure" class="tab" aria-selected="false">Figure作成</button></nav>
-<div id="chart-pane">
-<div class="view-head"><div><h2>プレビュー</h2><p>軸・目盛・グリッド・線・点・基準線・凡例をクリックして編集できます</p></div><div class="tools"><label class="chart-label-shortcut">数値ラベル <select id="preview-labels"><option value="none">なし</option><option value="value">各値</option><option value="total">合計</option></select></label><button id="undo" class="btn small white" title="Ctrl+Z" disabled>↶ Undo</button><button id="redo" class="btn small white" title="Ctrl+Y / Ctrl+Shift+Z" disabled>↷ Redo</button><button id="example" class="btn small white">サンプルに戻す</button><button id="clear" class="btn small danger">系列を全削除</button></div></div>
+<div class="workspace-command-row"><nav class="workspace-tabs" aria-label="表示切り替え"><button id="tab-chart" class="tab active" aria-selected="true">グラフ1</button><button id="tab-data" class="tab" aria-selected="false">データ1</button><button id="tab-gallery" class="tab" aria-selected="false">一覧</button><button id="tab-figure" class="tab" aria-selected="false">Figure作成</button></nav><div class="tools chart-quick-tools"><label class="chart-label-shortcut">数値ラベル <select id="preview-labels"><option value="none">なし</option><option value="value">各値</option><option value="total">合計</option></select></label><button id="undo" class="btn small white" title="Ctrl+Z" disabled>↶ Undo</button><button id="redo" class="btn small white" title="Ctrl+Y / Ctrl+Shift+Z" disabled>↷ Redo</button><button id="example" class="btn small white">サンプルに戻す</button><button id="clear" class="btn small danger">系列を全削除</button></div></div>
+<div id="chart-pane" aria-label="グラフプレビュー">
+<div class="view-head chart-view-head"><div><h2>プレビュー</h2><p>軸・目盛・グリッド・線・点・基準線・凡例をクリックして編集できます</p></div></div>
 <div class="chart-frame"><svg id="plot" viewBox="0 0 980 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="作図プレビュー"></svg><div id="tooltip"></div>
 <div id="inspector" class="inspector" hidden><div class="inspector-head" id="inspector-drag" title="ここを左右にドラッグして移動"><span class="drag-handle" aria-hidden="true">⠿</span><strong id="inspector-title">書式編集</strong><button class="inspector-close" id="inspector-close" title="閉じる" aria-label="閉じる">×</button></div><div id="inspector-fields"></div></div>
 </div></div>
 <section id="figure-pane" hidden>
- <div class="view-head"><div><h2>Figure作成</h2><p>複数のグラフを1枚の図版に並べて、SVGまたはPNGで保存できます。</p></div></div>
+ <div class="view-head"><div><h2>Figure作成</h2></div></div>
  <div class="figure-controls">
   <div class="figure-fields">
    <label>列数<select id="figure-cols"><option value="1">1列</option><option value="2" selected>2列</option><option value="3">3列</option></select></label>
@@ -314,12 +481,12 @@
   </div>
   <div class="figure-list" id="figure-list"></div>
   <div class="figure-buttons"><button class="btn soft" id="figure-svg">FigureをSVGで保存</button><button class="btn soft" id="figure-png">FigureをPNGで保存</button><button class="btn white" id="figure-layout-save">配置をJSONで保存</button><label class="btn white figure-file-label">配置を読み込む<input type="file" id="figure-layout-load" accept=".json,application/json" hidden></label></div>
-  <p class="desc">図版の位置・大きさ・順番を変更しても、元の各グラフのデータや体裁は変更されません。詳細を直したい場合は元のグラフを編集してください。</p>
+  <p class="desc">配置を変えても元のグラフは変更されません。</p>
  </div>
  <div class="figure-preview-wrap"><div id="figure-preview" class="figure-preview"></div></div>
 </section>
 <section id="gallery-pane" hidden>
-<div class="view-head"><div><h2>グラフ一覧</h2><p>縮小図を見ながら選択・並べ替え・体裁の一括適用ができます。</p></div></div>
+<div class="view-head"><div><h2>グラフ一覧</h2></div></div>
 <div class="gallery-controls">
  <div class="gallery-layout-controls"><span>配置</span><button class="btn small soft" data-gallery-cols="1">縦1列</button><button class="btn small soft" data-gallery-cols="2">横2列</button><button class="btn small soft" data-gallery-cols="3">3列</button></div>
  <div class="gallery-actions"><button id="gallery-copy" class="btn small white">選択グラフの体裁をコピー</button><button id="gallery-paste" class="btn small soft">選択グラフに体裁を適用</button><button id="gallery-export" class="btn small white">一覧を更新</button></div>
@@ -328,7 +495,7 @@
 <div class="gallery-grid" id="gallery-grid"></div>
 <div class="gallery-style-editor" id="gallery-style-editor" hidden>
  <div class="gallery-editor-head"><strong id="gallery-editor-title">簡易体裁編集</strong><button type="button" id="gallery-editor-close" class="btn small white">閉じる</button></div>
- <p class="desc">選択したグラフの体裁を一覧画面から編集します。詳細な軸・系列設定は「個別編集」を使用してください。</p>
+ 
  <div class="gallery-editor-fields">
   <label>プロット横幅 (px)<input type="number" id="gallery-plotwidth" min="240" max="1600" step="10"></label>
   <label>プロット縦幅 (px)<input type="number" id="gallery-plotheight" min="180" max="1200" step="10"></label>
@@ -340,7 +507,7 @@
  <button id="gallery-apply-style" class="btn small">このグラフに反映</button>
 </div>
 </section>
-<div id="data-pane" hidden><div class="view-head"><div><h2>読み込んだデータ</h2><p>Excelのシートを切り替えて値を閲覧します（閲覧専用）</p></div></div>
+<div id="data-pane" hidden><div class="view-head"><div><h2>読み込んだデータ</h2><p>閲覧専用</p></div></div>
 <div class="field"><label for="data-book">ファイル</label><select id="data-book"></select></div>
 <div class="sheets-row"><strong>シート</strong><div id="sheet-tabs" class="sheet-tabs" aria-label="Excelシート"></div></div>
 <div class="data-toolbar"><label for="data-search">シート内検索</label><input id="data-search" placeholder="列名や値を検索（このシート）"><span id="data-counter" class="muted"></span></div>
@@ -349,7 +516,7 @@
 <div class="table-viewport"><table class="sheet-table" id="sheet-table"><thead></thead><tbody></tbody></table></div>
 <div class="data-move-row"><label for="data-move-from">表示順の行番号</label><input type="number" id="data-move-from" min="1" step="1" placeholder="例：3"><label for="data-move-to">移動先の表示順</label><input type="number" id="data-move-to" min="1" step="1" placeholder="例：15"><button id="data-move-submit" type="button" class="btn small soft">指定位置へ移動</button></div>
 <div class="pagination"><button id="page-prev" class="btn small soft">← 前の100行</button><span id="data-page-info" class="muted"></span><button id="page-next" class="btn small soft">次の100行 →</button></div>
-<p class="desc">閲覧画面は読み込んだ値を表示します。Excelの書式・セル結合・式そのものは再現せず、数式セルは保存済みの計算結果を表示します。行の並べ替えはこのグラフの名称軸の順序だけに反映され、元のExcelは変更しません。</p>
+<p class="desc">書式・結合セルは再現しません。数式は計算結果を表示。行の並べ替えは元のExcelに影響しません。</p>
 </div>
 <div id="status" class="status" role="status" aria-live="polite"></div>
 
@@ -481,7 +648,7 @@ function availableSources(){return state.books.flatMap(b=>b.sheets.map(s=>({b,s}
 function refreshSources(){const items=availableSources();$('dataset-list').replaceChildren();for(const b of state.books){const ch=document.createElement('div');ch.className='dataset-chip';ch.title=b.filename;const name=document.createElement('span');name.textContent=b.filename;const bt=document.createElement('button');bt.type='button';bt.textContent='×';bt.title='このデータを削除（関連する系列も削除）';bt.setAttribute('aria-label',b.filename+' を削除');bt.addEventListener('click',()=>removeLoadedBook(b.id));ch.append(name,bt);$('dataset-list').append(ch)}const old=$('source').value;$('source').replaceChildren();items.forEach(({b,s})=>addOption($('source'),JSON.stringify([b.id,s.name]),sourceName(b,s)));if([...$('source').options].some(o=>o.value===old))$('source').value=old;refreshColumns();refreshDataView()}
 function refreshColumns(){const input=$('source').value;const [id,name]=input?JSON.parse(input):[null,null];const s=getSource({id,sheet:name});const preX=$('xcol').value,preY=$('ycol').value;$('xcol').replaceChildren();$('ycol').replaceChildren();if(!s){refreshBulkColumns();return;}s.headers.forEach((h,i)=>{addOption($('xcol'),String(i),h);addOption($('ycol'),String(i),h)});const maybeBV=s.headers.findIndex(h=>/^(?:BV|bed.?volumes?|time|elapsed|x)$/i.test(h.trim()));$('xcol').value=String(maybeBV>=0?maybeBV:0);$('ycol').value=String(s.headers.length>1?1:0);if([...$('xcol').options].some(o=>o.value===preX))$('xcol').value=preX;if([...$('ycol').options].some(o=>o.value===preY))$('ycol').value=preY;updateSuggestedLabel();refreshBulkColumns()}
 function updateSuggestedLabel(){const [id,name]=$('source').value?JSON.parse($('source').value):[null,null];const s=getSource({id,sheet:name});if(s){const b=state.books.find(b=>b.id===id);$('slabel').placeholder=displayedSheetName(b,s)+' · '+(s.headers[$('ycol').value]||'Y')}}
-function addSeries(){const [id,name]=$('source').value?JSON.parse($('source').value):[null,null];const sheet=getSource({id,sheet:name});if(!sheet)return status('先にExcelまたはCSVを読み込んでください',true);const xi=+$('xcol').value,yi=+$('ycol').value;if(!Number.isInteger(xi)||!Number.isInteger(yi))return;state.series.push({sid:++state.seq,ref:{id,sheet:name},x:xi,y:yi,label:$('slabel').value.trim()||`${sheet.name} · ${sheet.headers[yi]}`,color:palette[(state.series.length)%palette.length],visible:true});$('slabel').value='';render()}
+function addSeries(){const [id,name]=$('source').value?JSON.parse($('source').value):[null,null];const sheet=getSource({id,sheet:name});if(!sheet)return status('先にExcelまたはCSVを読み込んでください',true);const xi=+$('xcol').value,yi=+$('ycol').value;if(!Number.isInteger(xi)||!Number.isInteger(yi))return;state.series.push({sid:++state.seq,ref:{id,sheet:name},x:xi,y:yi,label:sheet.headers[yi]||sheet.name,color:palette[(state.series.length)%palette.length],visible:true});$('slabel').value='';render()}
 function renderSeries(){
  const host=$('series-list');host.replaceChildren();state.series.forEach((s,i)=>{
   const line=document.createElement('div');line.className='series-entry';line.dataset.seriesId=String(s.sid);
@@ -2126,5 +2293,36 @@ $('ui-language').addEventListener('change',()=>{
 syncSyntheticDemoLanguage();
 localizeControls();
 
+
+/* Compact UI labels introduced October 30. */
+Object.assign(i18nDictionary,{
+ 'ファイルを開く':'Open file',
+ 'データを追加する':'Add data',
+ '＋ データを追加する':'+ Add data',
+ 'まとめて追加（Ctrl / Shiftで複数選択）':'Add multiple (Ctrl / Shift select)',
+ '枠線を一括変更':'Batch outline style',
+ '色':'Color',
+ '適用':'Apply',
+ 'データラベル（プロットの数値を表示）':'Data labels (show plot values)'
+});
+localizeControls();
+
+/* Short UI explanations and bilingual equivalents. */
+Object.assign(i18nDictionary,{
+  "色・軸・凡例などの体裁を保存・適用します。": "Save or apply colors, axes, legend and other styles.",
+  "設定：作業全体／体裁：書式のみ。Excelの数値は保存しません。": "Settings: workspace / Style: appearance only. Excel values are not saved.",
+  "Excel・CSV・TSV対応。ドラッグ＆ドロップ可。": "Excel, CSV, TSV; drag and drop supported.",
+  "X列で分類。重複したX値は合算します。100%積み上げは負の値に非対応。": "Grouped by X; duplicate X values are summed. Negative values are not supported in 100% stacks.",
+  "SD・SE・95% CIを設定。95% CIはt分布に基づきます。積み上げ棒・ヒストグラム・箱ひげ図は非対応。": "Set SD, SE or 95% CI (t distribution). Unsupported for stacked bars, histograms and boxplots.",
+  "項目名は一覧やグラフ上で編集できます。": "Edit category names in the list or chart.",
+  "同じX値を全系列で表示／非表示にします。": "Show or hide the same X category in every series.",
+  "対数軸：1＝10倍、2＝100倍。線形軸：数値間隔。": "Log axis: 1 = ×10, 2 = ×100. Linear axis: numeric spacing.",
+  "上付き：": "Superscript: ",
+  "、下付き：": ", subscript: ",
+  "配置を変えても元のグラフは変更されません。": "Changing layout does not affect original charts.",
+  "閲覧専用": "Read-only",
+  "書式・結合セルは再現しません。数式は計算結果を表示。行の並べ替えは元のExcelに影響しません。": "Formatting and merged cells are not reproduced. Formula results are shown. Reordering does not edit source Excel."
+});
+localizeControls();
 </script>
 </body></html>
