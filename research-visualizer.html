@@ -2349,7 +2349,11 @@ Object.assign(i18nDictionary,{
 localizeControls();
 
 /* Dynamic tab translation and deleted-chart feedback. */
-Object.assign(i18nDictionary,{'LOCAL ONLY · オフライン動作':'LOCAL ONLY · Offline','一括変更':'Batch settings'});
+Object.assign(i18nDictionary,{'LOCAL ONLY · オフライン動作':'LOCAL ONLY · Offline','一括変更':'Batch settings',
+ '色・文字・グラフ寸法':'Colors, text and chart size',
+ '作図設定':'Chart settings',
+ 'グラフプレビュー':'Chart preview',
+ '作図プレビュー':'Chart preview'});
 const translateBeforeFold=translateValue;
 translateValue=function(raw){
  const original=String(raw).trim();
