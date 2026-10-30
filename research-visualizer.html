@@ -363,6 +363,13 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 .rv-recovery input{accent-color:darkgreen}
 .rv-recovery .desc{font-size:11px;margin:6px 0}
 .rv-recovery .btn{font-size:11px;padding:5px}
+
+/* Visible but muted selection for marker and line presets. */
+.swatch-option.active,.swatch-option[aria-pressed="true"]{background:#e5f3e2!important;border:2px solid #75a976!important;outline:1px solid #aed1ae!important;color:#174b22!important;box-shadow:inset 0 0 0 1px #fff!important}
+.swatch-option.active svg,.swatch-option[aria-pressed="true"] svg{opacity:1}
+.legend-position-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+.legend-position-grid button{min-width:0!important;white-space:nowrap;font-size:11px;padding:6px 4px}
+#reference-details{margin-top:14px}
 </style>
 </head>
 <body>
@@ -385,12 +392,12 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 </div></details></section><div class="lang-picker"><label for="ui-language">言語 / Language</label><select id="ui-language" aria-label="UI language"><option value="ja">日本語</option><option value="en">English</option></select></div></div></header>
 <main class="app">
 <aside class="panel" aria-label="作図設定"><div class="steps-scroll" id="steps-scroll">
-<section class="step sidebar-section"><details class="sidebar-fold" open><summary><h2><b>1</b> ファイルを開く</h2></summary><div class="sidebar-fold-content">
+<section class="step sidebar-section"><details class="sidebar-fold" open><summary><h2><b>1</b> ファイルの追加</h2></summary><div class="sidebar-fold-content">
 <label class="load-btn">＋ Excel / CSV を選ぶ<input id="file" type="file" multiple accept=".xlsx,.csv,.tsv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></label>
 <p class="desc">Excel・CSV・TSV対応。ドラッグ＆ドロップ可。</p>
 <div class="dataset-list" id="dataset-list"></div>
 </div></details></section>
-<section class="step sidebar-section"><details class="sidebar-fold" open><summary><h2><b>2</b> データを追加する</h2></summary><div class="sidebar-fold-content">
+<section class="step sidebar-section"><details class="sidebar-fold" open><summary><h2><b>2</b> データの追加</h2></summary><div class="sidebar-fold-content">
 <div class="field"><label for="source">ファイル / シート</label><select id="source"></select></div>
 <div class="grid2"><div class="field"><label for="xcol">X列</label><select id="xcol"></select></div><div class="field"><label for="ycol">Y列</label><select id="ycol"></select></div></div>
 <div class="grid2 new-series-defaults"><div class="field"><label for="markersize">新規系列の点の半径 (px)</label><input id="markersize" type="number" step="0.5" min="0.5" max="24" value="3.5"></div><div class="field"><label for="linewidth">新規系列の線の太さ (px)</label><input id="linewidth" type="number" step="0.25" min="0.25" max="16" value="2.35"></div></div><input id="slabel" type="hidden" value="">
@@ -418,7 +425,7 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 </div>
 <div class="legend-quick-controls" id="legend-quick-controls"><strong id="legend-quick-title">凡例の配置・段数</strong>
 <div class="legend-layout-controls" id="legend-sidebar">
-  <div class="field"><label>凡例の位置</label><div class="choice-group" data-choice="legendposition"><button type="button" data-value="top">上</button><button type="button" data-value="bottom">下</button><button type="button" data-value="left">左</button><button type="button" data-value="right">右</button></div></div>
+  <div class="field"><label>凡例の位置</label><div class="choice-group legend-position-grid" data-choice="legendposition"><button type="button" data-value="top-left">上・左</button><button type="button" data-value="top-right">上・右</button><button type="button" data-value="bottom-left">下・左</button><button type="button" data-value="bottom-right">下・右</button><button type="button" data-value="left-top">左・上</button><button type="button" data-value="left-bottom">左・下</button><button type="button" data-value="right-top">右・上</button><button type="button" data-value="right-bottom">右・下</button></div></div>
   <div class="field"><label>プロットエリアとの位置関係</label><div class="choice-group" data-choice="legendinside"><button type="button" data-value="inside">内側</button><button type="button" data-value="outside">外側</button></div></div>
   <div class="field"><label>凡例の並び方</label><div class="choice-group" data-choice="legenddirection"><button type="button" data-value="horizontal">横並び</button><button type="button" data-value="vertical">縦並び</button></div></div>
   <div class="field"><label for="legendrows" id="legendrows-main-label">凡例の段数</label><select id="legendrows"><option value="0">自動</option><option value="1">1段</option><option value="2">2段</option><option value="3">3段</option><option value="4">4段</option></select></div>
@@ -465,7 +472,7 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 <div class="legend-box-controls"><div class="grid2"><div class="field"><label for="legendfill">凡例枠の塗りつぶし色</label><input id="legendfill" type="color" value="#ffffff"></div><div class="field"><label for="legendbordercolor">凡例枠線の色</label><input id="legendbordercolor" type="color" value="#8ca0b4"></div></div>
 <div class="field"><label for="legendborderwidth">凡例枠線の太さ (px)</label><input id="legendborderwidth" type="number" min="0" max="15" step="0.25" value="1"></div></div>
 
-<input id="legendposition" type="hidden" value="bottom"><input id="legendinside" type="hidden" value="outside"><input id="legenddirection" type="hidden" value="horizontal">
+<input id="legendposition" type="hidden" value="bottom-left"><input id="legendinside" type="hidden" value="outside"><input id="legenddirection" type="hidden" value="horizontal">
 <div class="field"><label for="titlesize">タイトル文字 (pt)</label><input id="titlesize" type="number" min="6" max="40" step="0.5" value="15"></div>
 <div class="style-switches">
 <label><input id="titlebold" type="checkbox" checked> タイトル 太字</label>
@@ -477,12 +484,12 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 </div>
 <p class="desc">上付き：<code>10^{3}</code>、下付き：<code>C_{0}</code></p>
 </details>
-</div></details></section>
-<section class="step sidebar-section"><details class="sidebar-fold"><summary><h2><b>4</b> 基準線（リファレンスライン）</h2></summary><div class="sidebar-fold-content">
-
+<details class="style-details" id="reference-details"><summary>基準線</summary>
 <div class="grid2"><button id="add-hline" class="btn soft">＋ 水平線 (Y=1)</button><button id="add-vline" class="btn soft">＋ 垂直線</button></div>
 <div class="reference-list" id="reference-list"></div>
+</details>
 </div></details></section>
+
 </div>
 </aside>
 <section class="view">
@@ -725,7 +732,7 @@ if(mode==='line-points'||mode==='points'){const stride=Math.max(1,Math.ceil(pts.
 if(!active.length||!count)textEl(root,M.l+iw/2,M.t+ih/2,active.length?'表示できる数値データがありません':'X列とY列を選んで系列を追加してください',{'text-anchor':'middle','font-size':16,fill:'#899bb0','pointer-events':'none'});
 const legendY=M.t+ih+gapx+fsx+32;for(const item of layout){const s=item.s,style=seriesStyle(s),x=M.l+item.x,y=legendY+item.row*(fsl+13);el('line',{x1:x,y1:y-fsl*.35,x2:x+19,y2:y-fsl*.35,stroke:style.lineColor,'stroke-width':Math.max(2,style.lineWidth),'stroke-dasharray':dashArray(style.dash),'data-editor':'legend','data-series-id':s.sid},root);textEl(root,x+26,y,s.label,{'font-size':fsl,fill:$('legendcolor').value,'data-editor':'legend','data-series-id':s.sid})}
 root.onpointermove=e=>{const dot=e.target.closest?.('[data-tip]'),tip=$('tooltip');if(!dot){tip.style.display='none';return}tip.textContent=dot.getAttribute('data-tip');const wrap=$('plot').parentElement.getBoundingClientRect();tip.style.display='block';tip.style.left=Math.max(8,Math.min(e.clientX-wrap.left+12,wrap.width-210))+'px';tip.style.top=Math.max(10,e.clientY-wrap.top-65)+'px'};
-root.onpointerleave=()=>$('tooltip').style.display='none';status(`${active.length}系列 / 有効 ${count.toLocaleString()}点${ignored?' / 範囲外・対数軸で除外 '+ignored.toLocaleString()+'点':''}。作図とデータの読み込みはローカル処理です。`)
+root.onpointerleave=()=>$('tooltip').style.display='none';
 }
 function render(){renderSeries();draw()}
 function setDemo(){state.rowOrders={};state.categoryOrderSource=null;state.xLabelOverrides={};state.xHiddenCategories=[];xFilterLastSignature='';$('xmode').value='auto';state.refs=[];renderReferences();const make=(slope,center)=>Array.from({length:39},(_,i)=>{const bv=i*10000;const f=1/(1+Math.exp(-(bv-center)/slope));return[bv,+(f).toFixed(4),+(1/(1+Math.exp(-(bv-center-75000)/(slope*.8)))).toFixed(4)]});state.books=[{id:'demo',filename:'架空のデータ',sheets:[{name:'X=0.25',headers:['BV','物質A C/C0','物質B C/C0'],rows:make(26500,155000)},{name:'X=0.50',headers:['BV','物質A C/C0','物質B C/C0'],rows:make(34000,203000)}]}];state.series=[{sid:1,ref:{id:'demo',sheet:'X=0.25'},x:0,y:1,label:'物質A / X=0.25',color:palette[0],visible:true},{sid:2,ref:{id:'demo',sheet:'X=0.50'},x:0,y:1,label:'物質A / X=0.50',color:palette[1],visible:true}];state.seq=2;state.demo=true;
@@ -1133,7 +1140,11 @@ function draw(){
  const root=$('plot');root.replaceChildren();syncLegendButtons();const modeSelected=$('plotmode').value,isHistogram=modeSelected==='histogram',isBoxplot=modeSelected==='boxplot';const isBar=isBarMode(modeSelected);$('bar-width-field').hidden=!isBar;$('bar-mode-hint').hidden=!isBar||isHistogram;$('histbin-field').hidden=!isHistogram;const xMeta=isHistogram?getHistogramMeta():getXMeta();renderXFilter(xMeta);for(const k of ['xscale','yscale']){const inp=$(k);inp.disabled=(k==='xscale'?xMeta.category||isBar:isBar);if((k==='xscale'&&xMeta.category)||isBar)inp.value='linear';}for(const k of ['xmin','xmax','xtickstep','xformat','xdecimals'])$(k).disabled=xMeta.category;const iw=settingNumber('plotwidth',240,1600,800),ih=settingNumber('plotheight',180,1200,400);
  const fsx=ptToPx(settingNumber('xlabelsize',6,40,12)),fsy=ptToPx(settingNumber('ylabelsize',6,40,12)),tx=ptToPx(settingNumber('xticksize',6,30,9.75)),ty=ptToPx(settingNumber('yticksize',6,30,9.75)),fsl=ptToPx(settingNumber('legendsize',6,30,9)),fst=ptToPx(settingNumber('titlesize',6,40,15));
  const gapx=settingNumber('xgap',28,160,54),gapy=settingNumber('ygap',28,160,65),mode=$('plotmode').value,barMode=isBarMode(mode),active=state.series.map((s,i)=>({...s,points:xMeta.bySeries[i].map(p=>({...p}))})).filter(s=>s.visible),bar=barMode?prepBars(active,mode,{...xMeta,bySeries:state.series.flatMap((s,i)=>s.visible?[xMeta.bySeries[i]]:[])}):null;
- const legendPosition=$('legendposition').value,legendInside=$('legendinside').value==='inside',legendDirection=$('legenddirection').value;
+ const posRaw=$('legendposition').value;
+ const previousLegendPositions={top:'top-left',bottom:'bottom-left',left:'left-top',right:'right-top'};
+ const legendPosition=previousLegendPositions[posRaw]||posRaw;
+ const [legendSide,legendAlign]=legendPosition.split('-');
+ const legendInside=$('legendinside').value==='inside',legendDirection=$('legenddirection').value;
  const legendDx=settingNumber('legenddx',-1500,1500,0),legendDy=settingNumber('legenddy',-1500,1500,0);
  const legendSeries=(mode==='bar-stacked'||mode==='bar-percent')?[...active].reverse():active;
  const legend=measureLegend(legendSeries,fsl,legendDirection,Math.max(100,iw-14),Number($('legendrows').value)||0),shown=active.length>0,legendInset=7;
@@ -1147,18 +1158,21 @@ function draw(){
  const leftGutter=Math.max(99,gapy+42,ty*7+12);
  const M={l:leftGutter,r:Math.max(72,leftGutter-22),t:Math.max(56,fst+26),b:Math.max(110,offsetY+15)};
  if(shown&&!legendInside){
-  if(legendPosition==='top')M.t+=legend.height+legendPad+Math.max(0,-legendDy);
-  if(legendPosition==='bottom')M.b+=legend.height+legendPad+Math.max(0,legendDy);
-  if(legendPosition==='left')M.l+=legend.width+legendPad+Math.max(0,-legendDx);
-  if(legendPosition==='right')M.r+=legend.width+legendPad+Math.max(0,legendDx);
+  if(legendSide==='top')M.t+=legend.height+legendPad+Math.max(0,-legendDy);
+  if(legendSide==='bottom')M.b+=legend.height+legendPad+Math.max(0,legendDy);
+  if(legendSide==='left')M.l+=legend.width+legendPad+Math.max(0,-legendDx);
+  if(legendSide==='right')M.r+=legend.width+legendPad+Math.max(0,legendDx);
  }
  // User offsets are measured from the initial plot-edge alignment; padding stops SVG clipping.
  const baseAnchor=()=>{
   let x=M.l,y=M.t;
-  if(legendPosition==='top'){x=M.l;y=legendInside?M.t+sidePad:M.t-legend.height-legendPad}
-  else if(legendPosition==='bottom'){x=M.l;y=legendInside?M.t+ih-legend.height-sidePad:M.t+ih+offsetY}
-  else if(legendPosition==='left'){x=legendInside?M.l+sidePad:M.l-legend.width-legendPad;y=M.t}
-  else{x=legendInside?M.l+iw-legend.width-sidePad:M.l+iw+legendPad;y=M.t}
+  if(legendSide==='top'||legendSide==='bottom'){
+   x=legendAlign==='right'?M.l+iw-legend.width:M.l;
+   y=legendSide==='top'?(legendInside?M.t+sidePad:M.t-legend.height-legendPad):(legendInside?M.t+ih-legend.height-sidePad:M.t+ih+offsetY);
+  }else{
+   x=legendSide==='left'?(legendInside?M.l+sidePad:M.l-legend.width-legendPad):(legendInside?M.l+iw-legend.width-sidePad:M.l+iw+legendPad);
+   y=legendAlign==='bottom'?M.t+ih-legend.height:M.t;
+  }
   return {x:x+legendDx,y:y+legendDy};
  };
  let loc=baseAnchor();
@@ -1254,7 +1268,7 @@ function draw(){
   richTextEl(root,x+26,y,s.label,{'font-size':fsl,'font-weight':boldValue('legendbold'),fill:$('legendcolor').value,'fill-opacity':globalOpacity('legendcolor'),'data-editor':'legend','data-series-id':s.sid});
  }
  root.onpointermove=e=>{const dot=e.target.closest?.('[data-tip]'),tip=$('tooltip');if(!dot){tip.style.display='none';return}tip.textContent=dot.getAttribute('data-tip');const wrap=$('plot').parentElement.getBoundingClientRect();tip.style.display='block';tip.style.left=Math.max(8,Math.min(e.clientX-wrap.left+12,wrap.width-210))+'px';tip.style.top=Math.max(10,e.clientY-wrap.top-65)+'px'};
- root.onpointerleave=()=>$('tooltip').style.display='none';status(`${active.length}系列 / 表示 ${count.toLocaleString()}${barMode?'本':'点'}${barMode&&bar.badPercent.length?' / 負の値を除外 '+bar.badPercent.length+'カテゴリ':(!barMode&&ignored?' / 範囲外・対数軸で除外 '+ignored.toLocaleString()+'点':'')}。作図とデータの読み込みはローカル処理です。`)
+ root.onpointerleave=()=>$('tooltip').style.display='none';
 }
 // Inspector widgets. SVG thumbnails instead of text-only marker/line selectors.
 function inspectorDivider(title){const d=document.createElement('div');d.className='inspector-divider';d.textContent=title;return d}
@@ -1302,7 +1316,7 @@ function decorField(group,key,label,type){
  if(type==='color')attachColorOpacity(wrap,input,d[key+'Trans']??0,v=>{d[key+'Trans']=v;draw()});return wrap;
 }
 
-const legendChoices={legendposition:[['top','上'],['bottom','下'],['left','左'],['right','右']],legendinside:[['inside','内側'],['outside','外側']],legenddirection:[['horizontal','横並び'],['vertical','縦並び']]};
+const legendChoices={legendposition:[['top-left','上・左'],['top-right','上・右'],['bottom-left','下・左'],['bottom-right','下・右'],['left-top','左・上'],['left-bottom','左・下'],['right-top','右・上'],['right-bottom','右・下']],legendinside:[['inside','内側'],['outside','外側']],legenddirection:[['horizontal','横並び'],['vertical','縦並び']]};
 function syncLegendButtons(){for(const group of document.querySelectorAll('.choice-group[data-choice]')){const source=$(group.dataset.choice);for(const button of group.querySelectorAll('button[data-value]')){const on=button.dataset.value===source?.value;button.classList.toggle('active',on);button.setAttribute('aria-pressed',String(on))}}}
 function addLegendButtons(host,key,caption){const field=document.createElement('div');field.className='field';const lab=document.createElement('label');lab.textContent=caption;field.append(lab);
  const group=document.createElement('div');group.className='choice-group';group.dataset.choice=key;for(const [value,title] of legendChoices[key]){const b=document.createElement('button');b.type='button';b.textContent=title;b.dataset.value=value;b.setAttribute('aria-label',caption+'：'+title);group.append(b)}field.append(group);host.append(field);syncLegendButtons();return field}
@@ -2507,5 +2521,28 @@ Object.assign(i18nDictionary,{
  '今すぐ保存':'Save now','保存を削除':'Clear saved data'
 });
 rvInit();
+
+/* New labels, plus compatibility with prior saved four-sided legend positions. */
+Object.assign(i18nDictionary,{
+ 'ファイルの追加':'Add files','データの追加':'Add data','基準線':'Reference lines',
+ '上・左':'Top left','上・右':'Top right','下・左':'Bottom left','下・右':'Bottom right',
+ '左・上':'Left top','左・下':'Left bottom','右・上':'Right top','右・下':'Right bottom'
+});
+const rvLegacyLegendPositions={top:'top-left',bottom:'bottom-left',left:'left-top',right:'right-top'};
+const rvPreviousApplyGraph=applyGraph;
+applyGraph=function(...args){
+ const returned=rvPreviousApplyGraph(...args);
+ const old=$('legendposition').value;
+ if(rvLegacyLegendPositions[old])$('legendposition').value=rvLegacyLegendPositions[old];
+ syncLegendButtons();
+ return returned;
+};
+const rvPreviousDraw=draw;
+draw=function(...args){
+ const old=$('legendposition').value;
+ if(rvLegacyLegendPositions[old])$('legendposition').value=rvLegacyLegendPositions[old];
+ return rvPreviousDraw(...args);
+};
+localizeControls();
 </script>
 </body></html>
