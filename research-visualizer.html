@@ -370,6 +370,17 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 .legend-position-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
 .legend-position-grid button{min-width:0!important;white-space:nowrap;font-size:11px;padding:6px 4px}
 #reference-details{margin-top:14px}
+
+/* Data table: adjustable column widths, horizontal scrolling and clear resize handles. */
+.table-viewport{min-width:0;max-width:100%;overflow:auto}
+.sheet-table{table-layout:fixed;min-width:0!important;width:max-content}
+.sheet-table th,.sheet-table td{max-width:none!important;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.sheet-table th{position:sticky;top:0;user-select:none}
+.sheet-table th.rv-resizable-column{padding-right:17px;position:sticky}
+.rv-column-grip{position:absolute;right:0;top:0;bottom:0;width:10px;cursor:col-resize;touch-action:none;z-index:4;border-right:2px solid transparent;background:linear-gradient(to right,transparent 0,transparent 60%,#d1dbd1 60%,#d1dbd1 74%,transparent 74%);outline:0}
+.rv-column-grip:hover,.rv-column-grip:focus-visible,.rv-column-grip.rv-dragging{border-right-color:#3b8447;background:#e4f2e4;box-shadow:inset 2px 0 #c5dec7}
+.rv-column-grip:focus-visible{outline:2px solid #3b8447;outline-offset:-2px}
+.sheet-table th:first-child{min-width:80px}
 </style>
 </head>
 <body>
@@ -543,7 +554,7 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 <div id="data-pane" hidden><div class="view-head"><div><h2>読み込んだデータ</h2><p>閲覧専用</p></div></div>
 <div class="field"><label for="data-book">ファイル</label><select id="data-book"></select></div>
 <div class="sheets-row"><strong>シート</strong><div id="sheet-tabs" class="sheet-tabs" aria-label="Excelシート"></div></div>
-<div class="data-toolbar"><label for="data-search">シート内検索</label><input id="data-search" placeholder="列名や値を検索（このシート）"><span id="data-counter" class="muted"></span></div>
+<div class="data-toolbar"><label for="data-search">シート内検索</label><input id="data-search" placeholder="列名や値を検索（このシート）"><span id="data-counter" class="muted" aria-live="polite"></span></div>
 <div class="data-reorder-tools"><span>⠿ 行番号をドラッグして順番を変更できます。離れた行へは「指定位置へ移動」を使用してください。</span><button id="data-reset-order" type="button" class="btn small white">元の行順に戻す</button></div>
 <p id="data-order-feedback" class="desc" aria-live="polite"></p>
 <div class="table-viewport"><table class="sheet-table" id="sheet-table"><thead></thead><tbody></tbody></table></div>
@@ -808,10 +819,100 @@ function switchPane(which){$('chart-pane').hidden=which!=='chart';$('data-pane')
 function excelCol(i){let s='';for(i++;i>0;i=Math.floor((i-1)/26))s=String.fromCharCode(65+(i-1)%26)+s;return s}
 function setupDataBooks(){const books=$('data-book');const prior=books.value;books.replaceChildren();for(const b of state.books)addOption(books,b.id,b.filename);if(state.books.some(b=>b.id===prior))books.value=prior;else if(state.books.length)books.value=state.books[0].id;dataView.bookId=books.value;setupSheetTabs()}
 function setupSheetTabs(){const b=state.books.find(b=>b.id===dataView.bookId);const host=$('sheet-tabs');host.replaceChildren();if(!b)return;const previous=dataView.sheetName;if(!b.sheets.some(s=>s.name===previous))dataView.sheetName=b.sheets[0]?.name??null;for(const s of b.sheets){const bt=document.createElement('button');bt.textContent=displayedSheetName(b,s);bt.className=s.name===dataView.sheetName?'active':'';bt.addEventListener('click',()=>{dataView.sheetName=s.name;dataView.page=0;dataView.search='';$('data-search').value='';setupSheetTabs();renderDataView()});host.append(bt)}renderDataView()}
+
+// Data-view column widths are a local presentation preference, not an edit to Excel.
+const rvTableWidthsKey='researchVisualizerDataTableWidthsV1';
+let rvTableSavedWidths={};
+try{
+ const loaded=JSON.parse(localStorage.getItem(rvTableWidthsKey)||'{}');
+ if(loaded&&typeof loaded==='object'&&!Array.isArray(loaded))rvTableSavedWidths=loaded;
+}catch(_){}
+function rvTableWidthKey(book,sheet){return JSON.stringify([book.filename,sheet.name])}
+function rvTableDefaultWidth(sheet,viewport){
+ const available=viewport.clientWidth||900;
+ return Math.max(120,Math.min(560,Math.floor((Math.max(480,available)-88)/Math.max(1,sheet.headers.length))));
+}
+function rvTableWidths(book,sheet,viewport){
+ const initial=rvTableDefaultWidth(sheet,viewport),saved=rvTableSavedWidths[rvTableWidthKey(book,sheet)];
+ return sheet.headers.map((_,i)=>{
+  const width=Array.isArray(saved)?Number(saved[i]):NaN;
+  return Number.isFinite(width)&&width>=90&&width<=1100?Math.round(width):initial;
+ });
+}
+function rvSaveTableWidths(key,widths){
+ rvTableSavedWidths[key]=[...widths];
+ // Avoid accumulating an unbounded list of datasets in this local preference.
+ const keys=Object.keys(rvTableSavedWidths);if(keys.length>120)for(const old of keys.slice(0,keys.length-120))delete rvTableSavedWidths[old];
+ try{localStorage.setItem(rvTableWidthsKey,JSON.stringify(rvTableSavedWidths))}catch(_){}
+}
+function rvAddColumnGrip(th,columnIndex,sheet,widths,cols,table,storageKey,viewport){
+ const grip=document.createElement('span');grip.className='rv-column-grip';
+ grip.tabIndex=0;grip.setAttribute('role','separator');grip.setAttribute('aria-orientation','vertical');
+ const columnName=String(sheet.headers[columnIndex]||excelCol(columnIndex)).slice(0,90);
+ grip.setAttribute('aria-label',columnName+' — '+(uiIsEnglish()?'resize column':'列幅を変更'));
+ grip.setAttribute('title',uiIsEnglish()?'Drag to resize; double-click to reset':'ドラッグで列幅を変更・ダブルクリックでリセット');
+ grip.setAttribute('aria-valuemin','90');grip.setAttribute('aria-valuemax','1100');
+ const applyWidth=width=>{
+  const next=Math.max(90,Math.min(1100,Math.round(width)));
+  widths[columnIndex]=next;cols[columnIndex+1].style.width=next+'px';
+  table.style.width=(88+widths.reduce((a,b)=>a+b,0))+'px';
+  grip.setAttribute('aria-valuenow',String(next));
+ };
+ applyWidth(widths[columnIndex]);
+ let pointer=null,originX=0,originWidth=0;
+ grip.addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;
+  e.preventDefault();e.stopPropagation();
+  originX=e.clientX;originWidth=widths[columnIndex];pointer=e.pointerId;
+  grip.setPointerCapture(pointer);grip.classList.add('rv-dragging');
+ });
+ grip.addEventListener('pointermove',e=>{
+  if(pointer!==e.pointerId)return;
+  applyWidth(originWidth+e.clientX-originX);
+ });
+ const finish=e=>{
+  if(pointer!==e.pointerId)return;
+  pointer=null;grip.classList.remove('rv-dragging');
+  if(grip.hasPointerCapture(e.pointerId))grip.releasePointerCapture(e.pointerId);
+  rvSaveTableWidths(storageKey,widths);
+ };
+ grip.addEventListener('pointerup',finish);
+ grip.addEventListener('pointercancel',finish);
+ grip.addEventListener('dblclick',e=>{
+  e.preventDefault();e.stopPropagation();
+  applyWidth(rvTableDefaultWidth(sheet,viewport));
+  rvSaveTableWidths(storageKey,widths);
+ });
+ grip.addEventListener('keydown',e=>{
+  if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight'&&e.key!=='Home')return;
+  e.preventDefault();e.stopPropagation();
+  const delta=(e.shiftKey?40:12)*(e.key==='ArrowLeft'?-1:1);
+  applyWidth(e.key==='Home'?rvTableDefaultWidth(sheet,viewport):widths[columnIndex]+delta);
+  rvSaveTableWidths(storageKey,widths);
+ });
+ th.classList.add('rv-resizable-column');
+ th.append(grip);
+}
+
 function renderDataView(){const book=state.books.find(b=>b.id===dataView.bookId);const original=book?.sheets.find(s=>s.name===dataView.sheetName),sheet=original?getSource({id:book.id,sheet:original.name}):null;const originalOrder=original?sheetOrder(book,original):[];const table=$('sheet-table'),head=table.tHead,body=table.tBodies[0];head.replaceChildren();body.replaceChildren();if(!sheet){$('data-counter').textContent='表示するデータがありません';$('data-page-info').textContent='';$('data-order-feedback').textContent='';return}updateDataOrderFeedback(book,original);
 const q=dataView.search.trim().toLowerCase();const indices=[];for(let i=0;i<sheet.rows.length;i++){if(!q||sheet.rows[i].some(v=>String(v??'').toLowerCase().includes(q))||sheet.headers.some(h=>h.toLowerCase().includes(q)))indices.push(i)}
 const pages=Math.max(1,Math.ceil(indices.length/dataPageSize));dataView.page=Math.min(dataView.page,pages-1);const start=dataView.page*dataPageSize;const selected=indices.slice(start,start+dataPageSize);
-const htr=document.createElement('tr');const num=document.createElement('th');num.textContent='#';htr.append(num);sheet.headers.forEach((h,i)=>{const th=document.createElement('th');const col=document.createElement('span');col.className='colname';col.textContent=excelCol(i);th.append(col,document.createTextNode(h));th.title=h;htr.append(th)});head.append(htr);
+const viewport=table.closest('.table-viewport');
+ const savedKey=rvTableWidthKey(book,sheet),widths=rvTableWidths(book,sheet,viewport);
+ let colgroup=table.querySelector('colgroup');
+ if(!colgroup){colgroup=document.createElement('colgroup');table.prepend(colgroup)}
+ colgroup.replaceChildren();
+ const rowColumn=document.createElement('col');rowColumn.style.width='88px';colgroup.append(rowColumn);
+ const columns=widths.map(width=>{const c=document.createElement('col');c.style.width=width+'px';colgroup.append(c);return c});
+ table.style.width=(88+widths.reduce((a,b)=>a+b,0))+'px';
+ const htr=document.createElement('tr');const num=document.createElement('th');num.textContent='#';htr.append(num);
+ sheet.headers.forEach((h,i)=>{
+  const th=document.createElement('th'),col=document.createElement('span');col.className='colname';
+  col.textContent=excelCol(i);th.append(col,document.createTextNode(h));th.title=h;
+  rvAddColumnGrip(th,i,sheet,widths,[rowColumn,...columns],table,savedKey,viewport);
+  htr.append(th);
+ });
+ head.append(htr);
 for(const index of selected){const row=sheet.rows[index],tr=document.createElement('tr');const rn=document.createElement('td');rn.className='rownum';
 const handle=document.createElement('button');handle.type='button';handle.className='reorder-handle';handle.textContent='⠿';handle.draggable=true;handle.title='つかんで別の行へドラッグ';handle.setAttribute('aria-label','行 '+(index+1)+' をドラッグ');
 handle.addEventListener('dragstart',e=>{e.stopPropagation();dataDragRow=index;e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('application/x-rv-row',String(index));tr.classList.add('row-dragging')});
@@ -820,7 +921,7 @@ tr.addEventListener('dragover',e=>{if(dataDragRow===null)return;e.preventDefault
 tr.addEventListener('dragleave',()=>tr.classList.remove('row-drop-target'));
 tr.addEventListener('drop',e=>{if(dataDragRow===null)return;e.preventDefault();e.stopPropagation();tr.classList.remove('row-drop-target');moveDataRow(dataDragRow,index);dataDragRow=null});
 rn.title='元のExcelの行 '+String(originalOrder[index]+2);rn.append(handle,document.createTextNode(String(index+1)));tr.append(rn);for(let c=0;c<sheet.headers.length;c++){const td=document.createElement('td');const val=row[c];td.textContent=val==null?'':String(val);td.title=td.textContent;if(typeof val==='number')td.classList.add('num');tr.append(td)}body.append(tr)}
-$('data-counter').textContent=uiIsEnglish()?`${book.filename} / ${displayedSheetName(book,sheet)} · ${sheet.rows.length.toLocaleString('en-US')} rows × ${sheet.headers.length} columns${q?` · ${indices.length.toLocaleString('en-US')} matches`:''}`:`${book.filename} / ${sheet.name} ・ ${sheet.rows.length.toLocaleString()}行 × ${sheet.headers.length}列${q?` ・ 検索一致 ${indices.length.toLocaleString()}行`:''}`;
+$('data-counter').textContent=q?(uiIsEnglish()?`${indices.length.toLocaleString('en-US')} matching rows`:`検索一致 ${indices.length.toLocaleString()}行`):'';
 $('data-move-from').max=String(sheet.rows.length);$('data-move-to').max=String(sheet.rows.length);
 $('data-page-info').textContent=`${indices.length?(start+1)+'–'+Math.min(start+dataPageSize,indices.length):'0'} / ${indices.length.toLocaleString()} ${uiIsEnglish()?'rows':'行'}`;
 $('page-prev').disabled=dataView.page<=0;$('page-next').disabled=dataView.page>=pages-1;
