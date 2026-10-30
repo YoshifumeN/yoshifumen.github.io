@@ -307,6 +307,28 @@ header .tag{background:transparent;border:0;padding:0;color:#6c756b;border-radiu
   .lang-picker{margin-left:0}
 }
 
+
+/* Compact workspace controls 2026-10-30; chart logic unchanged. */
+.workspace-command-row{display:flex;align-items:center;gap:5px 10px;flex-wrap:wrap;margin:0 0 7px;border-bottom:1px solid #dce4da;min-width:0}
+.workspace-command-row .workspace-tabs{display:flex;flex:0 1 auto;gap:3px;flex-wrap:wrap;white-space:nowrap;min-width:0;border:0;margin:0}
+.workspace-command-row .workspace-tabs .tab{padding:5px 6px;font-size:12px}
+.workspace-command-row .chart-quick-tools{display:flex;align-items:center;justify-content:flex-end;flex:1 1 auto;gap:4px;margin:0 0 2px auto;min-width:0;flex-wrap:wrap}
+.chart-quick-tools .btn{font-size:11px;line-height:1.25;padding:5px 7px;white-space:nowrap}
+.chart-quick-tools .chart-label-shortcut{font-size:11px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.chart-quick-tools .chart-label-shortcut select{min-width:55px;width:auto;padding:3px 4px;min-height:27px;border-radius:2px;font-size:11px}
+.chart-view-head{display:none}
+.save-panel{padding:0!important}
+.save-details{min-width:0}
+.save-details>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;padding:8px 2px;min-height:36px}
+.save-details>summary::-webkit-details-marker{display:none}
+.save-details>summary h2{display:flex;align-items:center;gap:7px;margin:0;font-size:13px}
+.save-details>summary::after{content:"＋";color:darkgreen;font-size:15px;font-weight:700}
+.save-details[open]>summary::after{content:"−"}
+.save-details[open] .save-content{max-height:min(56vh,440px);overflow-y:auto;overscroll-behavior:contain;padding:6px 5px 10px 1px;border-top:1px solid #e1e8df}
+.legacy-single-export{display:none!important}
+.save-content .style-template-controls{margin-top:0}
+@media(max-width:1150px){.workspace-command-row .chart-quick-tools{justify-content:flex-start}}
+@media(max-width:630px){.workspace-command-row{gap:4px}.workspace-command-row .workspace-tabs .tab{padding:5px 4px;font-size:11px}.chart-quick-tools .btn{padding:5px 5px}}
 </style>
 </head>
 <body>
@@ -419,7 +441,7 @@ header .tag{background:transparent;border:0;padding:0;color:#6c756b;border-radiu
 <div class="grid2"><button id="add-hline" class="btn soft">＋ 水平線 (Y=1)</button><button id="add-vline" class="btn soft">＋ 垂直線</button></div>
 <div class="reference-list" id="reference-list"></div>
 </section>
-</div><section class="step save-panel"><h2><b>5</b> 保存・再利用</h2><div class="grid2"><button id="exportsvg" class="btn soft">SVGで保存</button><button id="exportpng" class="btn soft">PNGで保存</button></div>
+</div><section class="step save-panel"><details class="save-details"><summary><h2><b>5</b> 保存・再利用</h2></summary><div class="save-content"><div class="legacy-single-export" hidden><div class="grid2"><button id="exportsvg" class="btn soft">SVGで保存</button><button id="exportpng" class="btn soft">PNGで保存</button></div></div>
 <div class="style-template-controls">
   <strong>グラフの体裁テンプレート</strong>
   <p class="desc">色・形・太さ・軸・凡例・基準線などを保存して別のグラフに適用。データ・凡例名・タイトルと軸ラベルの文章は変更しません。</p>
@@ -429,13 +451,13 @@ header .tag{background:transparent;border:0;padding:0;color:#6c756b;border-radiu
 </div>
 <div class="grid2" style="margin-top:9px"><button id="savesettings" class="btn white">設定を保存</button><label class="btn white" style="text-align:center;cursor:pointer">設定を読み込む<input id="loadsettings" type="file" accept=".json,application/json" hidden></label></div>
 <p class="desc">「設定」はデータとの対応も含む作業全体。「体裁」は別グラフへ書式だけを移します。Excelの数値自体はどちらにも含めません。</p>
-</section>
+</div></details></section>
 </aside>
 <section class="view">
 <div class="graph-toolbar"><div id="graph-tabs" class="graph-tabs" role="tablist" aria-label="グラフを選択"></div><div class="graph-actions"><button class="btn small soft" id="add-graph">＋ グラフ追加</button><button class="btn small white" id="clone-graph">複製</button><button class="btn small danger" id="remove-graph">削除</button></div></div>
-<nav class="workspace-tabs" aria-label="表示切り替え"><button id="tab-chart" class="tab active" aria-selected="true">グラフ1</button><button id="tab-data" class="tab" aria-selected="false">データ1</button><button id="tab-gallery" class="tab" aria-selected="false">一覧</button><button id="tab-figure" class="tab" aria-selected="false">Figure作成</button></nav>
-<div id="chart-pane">
-<div class="view-head"><div><h2>プレビュー</h2><p>軸・目盛・グリッド・線・点・基準線・凡例をクリックして編集できます</p></div><div class="tools"><label class="chart-label-shortcut">数値ラベル <select id="preview-labels"><option value="none">なし</option><option value="value">各値</option><option value="total">合計</option></select></label><button id="undo" class="btn small white" title="Ctrl+Z" disabled>↶ Undo</button><button id="redo" class="btn small white" title="Ctrl+Y / Ctrl+Shift+Z" disabled>↷ Redo</button><button id="example" class="btn small white">サンプルに戻す</button><button id="clear" class="btn small danger">系列を全削除</button></div></div>
+<div class="workspace-command-row"><nav class="workspace-tabs" aria-label="表示切り替え"><button id="tab-chart" class="tab active" aria-selected="true">グラフ1</button><button id="tab-data" class="tab" aria-selected="false">データ1</button><button id="tab-gallery" class="tab" aria-selected="false">一覧</button><button id="tab-figure" class="tab" aria-selected="false">Figure作成</button></nav><div class="tools chart-quick-tools"><label class="chart-label-shortcut">数値ラベル <select id="preview-labels"><option value="none">なし</option><option value="value">各値</option><option value="total">合計</option></select></label><button id="undo" class="btn small white" title="Ctrl+Z" disabled>↶ Undo</button><button id="redo" class="btn small white" title="Ctrl+Y / Ctrl+Shift+Z" disabled>↷ Redo</button><button id="example" class="btn small white">サンプルに戻す</button><button id="clear" class="btn small danger">系列を全削除</button></div></div>
+<div id="chart-pane" aria-label="グラフプレビュー">
+<div class="view-head chart-view-head"><div><h2>プレビュー</h2><p>軸・目盛・グリッド・線・点・基準線・凡例をクリックして編集できます</p></div></div>
 <div class="chart-frame"><svg id="plot" viewBox="0 0 980 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="作図プレビュー"></svg><div id="tooltip"></div>
 <div id="inspector" class="inspector" hidden><div class="inspector-head" id="inspector-drag" title="ここを左右にドラッグして移動"><span class="drag-handle" aria-hidden="true">⠿</span><strong id="inspector-title">書式編集</strong><button class="inspector-close" id="inspector-close" title="閉じる" aria-label="閉じる">×</button></div><div id="inspector-fields"></div></div>
 </div></div>
