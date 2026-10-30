@@ -343,10 +343,24 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 .header-save .save-details[open] .save-content{position:absolute;right:0;top:calc(100% + 6px);width:min(360px,calc(100vw - 24px));max-height:min(72vh,620px);overflow-y:auto;overscroll-behavior:contain;padding:13px 14px;border:1px solid #d5e0d2;background:#fff;box-shadow:0 10px 28px rgba(19,45,20,.15);z-index:1000}
 .header-save .save-content .style-template-controls{margin-top:0}
 @media(max-width:650px){header{align-items:flex-start}.header-controls{justify-content:flex-start;gap:7px 10px}.header-controls .tag{flex-basis:100%}.header-save .save-details[open] .save-content{right:auto;left:0}}
+
+/* Foldable sidebar sections, seven-row picker and simpler legend panel. */
+.sidebar-section{padding:0!important}
+.sidebar-fold>summary{list-style:none;cursor:pointer;padding:13px 1px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sidebar-fold>summary::-webkit-details-marker{display:none}
+.sidebar-fold>summary h2{display:flex;align-items:center;gap:8px;margin:0!important}
+.sidebar-fold>summary::after{content:"▾";color:darkgreen;font-size:13px;line-height:1}
+.sidebar-fold:not([open])>summary::after{content:"▸"}
+.sidebar-fold>.sidebar-fold-content{padding:0 2px 14px}
+.sidebar-fold:not([open])>.sidebar-fold-content{display:none}
+#bulk-y-columns{height:auto;min-height:186px}
+.legend-quick-controls,.legend-quick-controls .legend-layout-controls{border:0!important;box-shadow:none!important;background:transparent!important;border-radius:0;padding-left:0;padding-right:0}
+#bulk-appearance-details{margin-bottom:12px}
+.new-series-defaults{margin-top:9px}
 </style>
 </head>
 <body>
-<header><div><h1>Research Visualizer <span style="font-size:12px;font-weight:500;color:#b8cee1">v1.7.5</span></h1></div><div class="header-controls"><div class="tag">LOCAL ONLY · オフライン動作</div><section class="step save-panel header-save"><details class="save-details"><summary><h2><b>5</b> 保存・再利用</h2></summary><div class="save-content"><div class="legacy-single-export" hidden><div class="grid2"><button id="exportsvg" class="btn soft">SVGで保存</button><button id="exportpng" class="btn soft">PNGで保存</button></div></div>
+<header><div><h1>Research Visualizer <span style="font-size:12px;font-weight:500;color:#b8cee1">v1.7.5</span></h1></div><div class="header-controls"><div class="tag">LOCAL ONLY · オフライン動作</div><section class="step save-panel header-save"><details class="save-details"><summary><h2>保存・再利用</h2></summary><div class="save-content"><div class="legacy-single-export" hidden><div class="grid2"><button id="exportsvg" class="btn soft">SVGで保存</button><button id="exportpng" class="btn soft">PNGで保存</button></div></div>
 <div class="style-template-controls">
   <strong>グラフの体裁テンプレート</strong>
   <p class="desc">色・軸・凡例などの体裁を保存・適用します。</p>
@@ -359,19 +373,20 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 </div></details></section><div class="lang-picker"><label for="ui-language">言語 / Language</label><select id="ui-language" aria-label="UI language"><option value="ja">日本語</option><option value="en">English</option></select></div></div></header>
 <main class="app">
 <aside class="panel" aria-label="作図設定"><div class="steps-scroll" id="steps-scroll">
-<section class="step"><h2><b>1</b> ファイルを開く</h2>
+<section class="step sidebar-section"><details class="sidebar-fold" open><summary><h2><b>1</b> ファイルを開く</h2></summary><div class="sidebar-fold-content">
 <label class="load-btn">＋ Excel / CSV を選ぶ<input id="file" type="file" multiple accept=".xlsx,.csv,.tsv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></label>
 <p class="desc">Excel・CSV・TSV対応。ドラッグ＆ドロップ可。</p>
 <div class="dataset-list" id="dataset-list"></div>
-</section>
-<section class="step"><h2><b>2</b> データを追加する</h2>
+</div></details></section>
+<section class="step sidebar-section"><details class="sidebar-fold" open><summary><h2><b>2</b> データを追加する</h2></summary><div class="sidebar-fold-content">
 <div class="field"><label for="source">ファイル / シート</label><select id="source"></select></div>
 <div class="grid2"><div class="field"><label for="xcol">X列</label><select id="xcol"></select></div><div class="field"><label for="ycol">Y列</label><select id="ycol"></select></div></div>
-<input id="slabel" type="hidden" value="">
+<div class="grid2 new-series-defaults"><div class="field"><label for="markersize">新規系列の点の半径 (px)</label><input id="markersize" type="number" step="0.5" min="0.5" max="24" value="3.5"></div><div class="field"><label for="linewidth">新規系列の線の太さ (px)</label><input id="linewidth" type="number" step="0.25" min="0.25" max="16" value="2.35"></div></div><input id="slabel" type="hidden" value="">
 <button id="add" class="btn full">＋ データを追加する</button>
-<div class="batch-series"><strong id="bulk-series-title">まとめて追加（Ctrl / Shiftで複数選択）</strong><div class="field"><select id="bulk-y-columns" multiple size="5" aria-labelledby="bulk-series-title"></select></div><button id="bulk-add-series" class="btn soft full" type="button">＋ 選択した列を一括追加</button></div>
+<div class="batch-series"><strong id="bulk-series-title">まとめて追加（Ctrl / Shiftで複数選択）</strong><div class="field"><select id="bulk-y-columns" multiple size="7" aria-labelledby="bulk-series-title"></select></div><button id="bulk-add-series" class="btn soft full" type="button">＋ 選択した列を一括追加</button></div>
 <div id="series-list" class="series-list"></div>
-<div class="bulk-marker-border">
+</div></details></section>
+<section class="step sidebar-section"><details class="sidebar-fold"><summary><h2><b>3</b> グラフの体裁</h2></summary><div class="sidebar-fold-content"><details class="style-details" id="bulk-appearance-details"><summary>一括変更</summary><div class="bulk-marker-border">
  <strong>枠線を一括変更</strong>
  
  <div class="grid2"><div class="field"><label for="bulk-border-color">色</label><input type="color" id="bulk-border-color" value="#333333"></div><div class="field"><label for="bulk-border-alpha">透明度 (%)</label><input type="number" id="bulk-border-alpha" value="0" min="0" max="100" step="1"></div></div>
@@ -382,11 +397,10 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
  <div class="field"><label for="bulk-palette">配色</label><select id="bulk-palette"><option value="rainbow">虹色（色相順）</option><option value="saturation">青系（彩度変化）</option><option value="gradient">青 → 赤（連続変化）</option><option value="viridis">Viridis風（連続色）</option><option value="gray">グレースケール</option><option value="categorical">標準配色</option></select></div>
  <div class="field"><label for="bulk-palette-scope">変更する範囲</label><select id="bulk-palette-scope"><option value="chart">このグラフの全系列</option><option value="all">全グラフの全系列</option></select></div>
  <button id="bulk-palette-apply" type="button" class="btn soft full">適用</button>
-</div></section>
-<section class="step"><h2><b>3</b> グラフの体裁</h2>
+</div></details>
 <div class="field"><label for="title">タイトル（空白でもOK）</label><input id="title" placeholder="Breakthrough curves"></div>
 <div class="grid2"><div class="field"><label for="xlabel">X軸ラベル</label><input id="xlabel" value="Bed volumes (BV)"></div><div class="field"><label for="ylabel">Y軸ラベル</label><input id="ylabel" value="C / C₀"></div></div>
-<div class="grid2"><div class="field"><label for="plotmode">表示形式</label><select id="plotmode"><option value="line-points">線＋点</option><option value="points">散布図（点のみ）</option><option value="line">線のみ</option><option value="step">階段線</option><option value="area">面グラフ</option><option value="bar-grouped">集合棒グラフ</option><option value="bar-stacked">積み上げ棒グラフ</option><option value="bar-percent">100%積み上げ棒グラフ</option><option value="histogram">ヒストグラム</option><option value="boxplot">箱ひげ図</option></select></div><div class="field"><label for="markersize">新規系列の点の半径 (px)</label><input id="markersize" type="number" step="0.5" min="0.5" max="24" value="3.5"></div></div><div class="data-label-controls"><strong>データラベル（プロットの数値を表示）</strong>
+<div class="field"><label for="plotmode">表示形式</label><select id="plotmode"><option value="line-points">線＋点</option><option value="points">散布図（点のみ）</option><option value="line">線のみ</option><option value="step">階段線</option><option value="area">面グラフ</option><option value="bar-grouped">集合棒グラフ</option><option value="bar-stacked">積み上げ棒グラフ</option><option value="bar-percent">100%積み上げ棒グラフ</option><option value="histogram">ヒストグラム</option><option value="boxplot">箱ひげ図</option></select></div><div class="data-label-controls"><strong>データラベル（プロットの数値を表示）</strong>
  <div class="grid2"><div class="field"><label for="datalabelmode">表示</label><select id="datalabelmode"><option value="none">表示しない</option><option value="value">各値を表示</option><option value="total">各項目の合計を表示</option></select></div><div class="field"><label for="datalabeldecimals">小数桁</label><input id="datalabeldecimals" type="number" min="0" max="8" step="1" value="1"></div></div>
  <div class="grid2"><div class="field"><label for="datalabelsize">文字サイズ (pt)</label><input id="datalabelsize" type="number" min="6" max="24" step="0.5" value="9"></div><div class="field"><label for="datalabelcolor">文字色</label><input id="datalabelcolor" type="color" value="#243448"></div></div>
 </div>
@@ -410,7 +424,7 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
  <div class="field"><label for="xtickalign">共通の文字揃え</label><select id="xtickalign"><option value="center">中央揃え</option><option value="right">右揃え</option><option value="left">左揃え</option></select></div></div>
  <button id="xcat-resetlabels" type="button" class="btn small white">名称の変更をすべてリセット</button>
 </div><div class="x-filter-head"><strong>横軸の項目を表示 / 非表示</strong><span id="x-filter-count" class="muted"></span></div><p class="desc">同じX値を全系列で表示／非表示にします。</p><input id="x-filter-search" class="x-filter-search" type="search" placeholder="項目名で絞り込み"><div class="x-filter-actions"><button type="button" class="btn white" id="x-filter-all">すべて表示</button><button type="button" class="btn white" id="x-filter-none">すべて非表示</button><button type="button" class="btn white" id="x-filter-visible">検索結果を表示</button></div><div id="x-filter-list" class="x-filter-list"></div><p id="x-filter-hint" class="desc"></p></div>
-<div class="field"><label for="linewidth">新規系列の線の太さ (px)</label><input id="linewidth" type="number" step="0.25" min="0.25" max="16" value="2.35"></div>
+
 <div class="grid2"><div class="field"><label for="xscale">X軸</label><select id="xscale"><option value="linear">線形</option><option value="log">対数</option></select></div><div class="field"><label for="yscale">Y軸</label><select id="yscale"><option value="linear">線形</option><option value="log">対数</option></select></div></div>
 <div class="grid2"><div class="field"><label for="xmin">X最小値</label><input id="xmin" type="number" step="any" placeholder="自動"></div><div class="field"><label for="xmax">X最大値</label><input id="xmax" type="number" step="any" placeholder="自動"></div></div>
 <div class="grid2"><div class="field"><label for="ymin">Y最小値</label><input id="ymin" type="number" step="any" placeholder="自動"></div><div class="field"><label for="ymax">Y最大値</label><input id="ymax" type="number" step="any" placeholder="自動"></div></div>
@@ -424,7 +438,7 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 <div class="grid2"><div class="field"><label><input id="xgridon" type="checkbox" checked> 縦グリッド線</label></div><div class="field"><label><input id="ygridon" type="checkbox" checked> 横グリッド線</label></div></div>
 
 </details>
-<details class="style-details"><summary>色・文字・グラフ寸法（詳細設定）</summary>
+<details class="style-details"><summary>色・文字・グラフ寸法</summary>
 
 <div class="grid2"><div class="field"><label for="plotwidth">プロット横幅 (px)</label><input id="plotwidth" type="number" min="240" max="1600" step="10" value="800"></div><div class="field"><label for="plotheight">プロット縦幅 (px)</label><input id="plotheight" type="number" min="180" max="1200" step="10" value="400"></div></div>
 <div class="grid2"><div class="field"><label for="xaxiscolor">横軸の色</label><input id="xaxiscolor" type="color" value="#50657c"></div><div class="field"><label for="yaxiscolor">縦軸の色</label><input id="yaxiscolor" type="color" value="#50657c"></div></div>
@@ -451,12 +465,12 @@ header{position:relative;z-index:50;padding-top:16px;padding-bottom:12px;align-i
 </div>
 <p class="desc">上付き：<code>10^{3}</code>、下付き：<code>C_{0}</code></p>
 </details>
-</section>
-<section class="step"><h2><b>4</b> 基準線（リファレンスライン）</h2>
+</div></details></section>
+<section class="step sidebar-section"><details class="sidebar-fold"><summary><h2><b>4</b> 基準線（リファレンスライン）</h2></summary><div class="sidebar-fold-content">
 
 <div class="grid2"><button id="add-hline" class="btn soft">＋ 水平線 (Y=1)</button><button id="add-vline" class="btn soft">＋ 垂直線</button></div>
 <div class="reference-list" id="reference-list"></div>
-</section>
+</div></details></section>
 </div>
 </aside>
 <section class="view">
@@ -1385,12 +1399,13 @@ function applyGraph(index){
 function renderGraphTabs(){
   const host=$('graph-tabs');host.replaceChildren();
   for(let i=0;i<state.graphs.length;i++){
-    const b=document.createElement('button');b.textContent='グラフ'+(i+1);b.className=i===state.activeGraph?'active':'';
+    const b=document.createElement('button');b.textContent=($('ui-language')?.value==='en'?'Chart ':'グラフ')+(i+1);b.className=i===state.activeGraph?'active':'';
     b.setAttribute('role','tab');b.setAttribute('aria-selected',String(i===state.activeGraph));
     b.addEventListener('click',()=>selectGraph(i));host.append(b);
   }
-  const n=state.activeGraph+1;
-  $('tab-chart').textContent='グラフ'+n;$('tab-data').textContent='データ'+n;
+  const n=state.activeGraph+1,eng=$('ui-language')?.value==='en';
+  $('tab-chart').textContent=(eng?'Chart ':'グラフ')+n;
+  $('tab-data').textContent=(eng?'Data ':'データ')+n;
   $('remove-graph').disabled=state.graphs.length===1;
 }
 function selectGraph(i){if(i===state.activeGraph)return;persistCurrentChart();applyGraph(i)}
@@ -1403,8 +1418,16 @@ function newGraph(duplicate=false){
 }
 function removeGraph(){
   if(state.graphs.length<=1)return;
-  persistCurrentChart();state.graphs.splice(state.activeGraph,1);
-  applyGraph(Math.min(state.activeGraph,state.graphs.length-1));
+  const removedIndex=state.activeGraph,removedTitle=$('title').value.trim();
+  persistCurrentChart();
+  state.graphs.splice(removedIndex,1);
+  if(typeof galleryState!=='undefined'){
+    galleryState.checked=new Set([...galleryState.checked].filter(i=>i!==removedIndex).map(i=>i>removedIndex?i-1:i));
+    galleryState.editing=galleryState.editing===removedIndex?-1:galleryState.editing>removedIndex?galleryState.editing-1:galleryState.editing;
+  }
+  applyGraph(Math.min(removedIndex,state.graphs.length-1));
+  switchPane('chart');
+  status('グラフ'+(removedIndex+1)+'を削除しました'+(removedTitle?'（'+removedTitle+'）':'')+'。残りのグラフ番号を詰めました。');
 }
 $('add-graph').addEventListener('click',()=>newGraph());
 $('clone-graph').addEventListener('click',()=>newGraph(true));
@@ -2323,6 +2346,23 @@ Object.assign(i18nDictionary,{
   "閲覧専用": "Read-only",
   "書式・結合セルは再現しません。数式は計算結果を表示。行の並べ替えは元のExcelに影響しません。": "Formatting and merged cells are not reproduced. Formula results are shown. Reordering does not edit source Excel."
 });
+localizeControls();
+
+/* Dynamic tab translation and deleted-chart feedback. */
+Object.assign(i18nDictionary,{'LOCAL ONLY · オフライン動作':'LOCAL ONLY · Offline','一括変更':'Batch settings',
+ '色・文字・グラフ寸法':'Colors, text and chart size',
+ '作図設定':'Chart settings',
+ 'グラフプレビュー':'Chart preview',
+ '作図プレビュー':'Chart preview'});
+const translateBeforeFold=translateValue;
+translateValue=function(raw){
+ const original=String(raw).trim();
+ const m=original.match(/^グラフ(\d+)を削除しました(?:（(.+?)）)?。残りのグラフ番号を詰めました。$/);
+ if(m)return 'Deleted Chart '+m[1]+(m[2]?' ('+m[2]+')':'')+'. Remaining charts were renumbered.';
+ return translateBeforeFold(raw);
+};
+$('ui-language').addEventListener('change',()=>{renderGraphTabs();localizeControls()});
+renderGraphTabs();
 localizeControls();
 </script>
 </body></html>
