@@ -1,34 +1,42 @@
 {
   "10.2166/ws.2025.094": {
     "count": 2,
-    "retrieved": "2026-10-28"
+    "retrieved": "2026-11-04",
+    "source": "OpenAlex"
   },
   "10.1016/j.watres.2024.121396": {
-    "count": 26,
-    "retrieved": "2026-10-28"
+    "count": 31,
+    "retrieved": "2026-11-04",
+    "source": "OpenAlex"
   },
   "10.1016/j.watres.2023.120559": {
-    "count": 50,
-    "retrieved": "2026-10-28"
+    "count": 58,
+    "retrieved": "2026-11-04",
+    "source": "OpenAlex"
   },
   "10.1016/j.watres.2021.117550": {
-    "count": 63,
-    "retrieved": "2026-10-28"
+    "count": 74,
+    "retrieved": "2026-11-04",
+    "source": "OpenAlex"
   },
   "10.1016/j.watres.2020.116786": {
-    "count": 7,
-    "retrieved": "2026-10-28"
+    "count": 8,
+    "retrieved": "2026-11-04",
+    "source": "OpenAlex"
   },
   "10.1016/j.watres.2020.116093": {
     "count": 24,
-    "retrieved": "2026-10-28"
+    "retrieved": "2026-11-04",
+    "source": "OpenAlex"
   },
   "10.1016/j.watres.2018.10.008": {
     "count": 12,
-    "retrieved": "2026-10-28"
+    "retrieved": "2026-11-04",
+    "source": "OpenAlex"
   },
   "10.1016/j.watres.2018.03.046": {
-    "count": 28,
-    "retrieved": "2026-10-28"
+    "count": 32,
+    "retrieved": "2026-11-04",
+    "source": "OpenAlex"
   }
 }
