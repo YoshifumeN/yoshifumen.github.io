@@ -38,9 +38,13 @@ jobs:
 
       - name: Fetch and validate citation counts
         run: python scripts/update_citations.py
+        env:
+          OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
         # HTTP 429 and other fetch errors fail the job without overwriting old counts.
 
       - name: Create reviewable citation update PR (never push to main)
+        # A manual run on a feature branch is a safe end-to-end test: no PR or publication.
+        if: github.ref == 'refs/heads/main'
         id: citation_pr
         uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
@@ -51,10 +55,10 @@ jobs:
           branch: automation/citation-counts
           delete-branch: true
           draft: true
-          commit-message: "Update Semantic Scholar citation counts"
-          title: "Update publication citation counts (Semantic Scholar)"
+          commit-message: "Update OpenAlex citation counts"
+          title: "Update publication citation counts (OpenAlex)"
           body: |
-            Automated citation count refresh from Semantic Scholar.
+            Automated citation count refresh from OpenAlex.
 
             Only `publications.html` and `data/citations.json` are changed.
             Review counts and dates before merging. This PR does not auto-merge.
