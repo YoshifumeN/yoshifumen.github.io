@@ -43,6 +43,8 @@ jobs:
         # HTTP 429 and other fetch errors fail the job without overwriting old counts.
 
       - name: Create reviewable citation update PR (never push to main)
+        # A manual run on a feature branch is a safe end-to-end test: no PR or publication.
+        if: github.ref == 'refs/heads/main'
         id: citation_pr
         uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
